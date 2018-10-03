@@ -6,3 +6,5 @@ py_binary(
     ],
     visibility = ["//visibility:public"],
 )
+
+exports_files(["main_template.sh"])

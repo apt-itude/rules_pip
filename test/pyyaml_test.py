@@ -1,6 +1,7 @@
 import yaml
 
-data = {
+
+DATA = {
     "ghosts": [
         "inky",
         "pinky",
@@ -9,6 +10,7 @@ data = {
     ]
 }
 
-yaml_str = yaml.dump(data)
 
-assert yaml.load(yaml_str) == data
+def test_yaml():
+    yaml_str = yaml.dump(DATA)
+    assert yaml.load(yaml_str) == DATA

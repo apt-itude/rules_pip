@@ -1,14 +1,22 @@
 import argparse
 import glob
 import os
+import pkg_resources
 import subprocess
 import sys
 import textwrap
 from wheel import wheelfile
 
 
+PACKAGES_TO_IGNORE = [
+    'pip',
+    'pkg-resources',
+    'setuptools',
+    'wheel',
+]
+
+
 def main():
-    print('executing create_wheels_repo')
     args = parse_args()
     download_wheels(args.requirements, args.repository_directory)
     expand_wheels_into_bazel_packages(args.repository_directory)
@@ -46,29 +54,41 @@ def find_wheels(directory):
 
 
 def unpack_wheel_into_bazel_package(wheel_path, repository_directory):
-    wheel_name, package_directory = unpack_wheel(
-        wheel_path,
-        repository_directory
-    )
+    distribution = unpack_wheel(wheel_path, repository_directory)
 
-    create_bazel_build_file(wheel_name, package_directory)
+    if distribution.project_name not in PACKAGES_TO_IGNORE:
+        create_bazel_build_file(distribution)
 
 
 def unpack_wheel(wheel_path, repository_directory):
+    # TODO(): don't use unsupported wheel library
     with wheelfile.WheelFile(wheel_path) as wheel_file:
-        name = normalize_wheel_name(wheel_file.parsed_filename.group('name'))
-        package_directory = os.path.join(repository_directory, name)
+        distribution_name = wheel_file.parsed_filename.group("name")
+        library_name = normalize_distribution_name(distribution_name)
+        package_directory = os.path.join(repository_directory, library_name)
         wheel_file.extractall(package_directory)
 
-    return name, package_directory
+    try:
+        return next(pkg_resources.find_distributions(package_directory))
+    except StopIteration:
+        # TODO(): raise custom exception
+        raise
 
 
-def normalize_wheel_name(name):
-    return name.lower()
+def normalize_distribution_name(name):
+    return name.lower().replace("-", "_")
 
 
-def create_bazel_build_file(wheel_name, package_directory):
-    path = os.path.join(package_directory, "BUILD")
+def create_bazel_build_file(distribution):
+    path = os.path.join(distribution.location, "BUILD")
+
+    library_name = normalize_distribution_name(distribution.project_name)
+
+    dependencies = ", ".join(
+        '"//{}"'.format(normalize_distribution_name(req.project_name))
+        for req in distribution.requires()
+        if req.project_name not in PACKAGES_TO_IGNORE
+    )
 
     contents = textwrap.dedent("""
         py_library(
@@ -76,14 +96,18 @@ def create_bazel_build_file(wheel_name, package_directory):
             srcs = glob(["**/*.py"]),
             data = glob(
                 ["**/*"],
-                exclude = ["**/*.py", "BUILD", "WORKSPACE", "*.whl.zip"]
+                exclude = ["**/*.py", "BUILD", "WORKSPACE", "*.whl.zip"],
             ),
+            deps = [{deps}],
             imports = ["."],
             visibility = ["//visibility:public"],
         )
-    """).lstrip().format(name=wheel_name)
+    """).lstrip().format(
+        name=library_name,
+        deps=dependencies,
+    )
 
-    with open(path, mode='w') as build_file:
+    with open(path, mode="w") as build_file:
         build_file.write(contents)
 
 

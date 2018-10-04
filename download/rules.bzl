@@ -1,4 +1,6 @@
 def _pip_requirements_impl(repo_ctx):
+    repo_ctx.file("BUILD", "")
+
     create_wheels_repo_path = repo_ctx.path(repo_ctx.attr._create_wheels_repo)
     requirements_path = repo_ctx.path(repo_ctx.attr.requirements)
     repo_directory = repo_ctx.path("")

@@ -1,7 +1,9 @@
 py_test(
-    name = "pyyaml_test",
-    srcs = ["pyyaml_test.py"],
+    name = "main",
+    srcs = glob(["*.py"]),
     deps = [
+        "@pip3//pytest",
+        "@pip3//pytest_mock",
         "@pip3//pyyaml",
     ]
 )

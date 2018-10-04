@@ -9,3 +9,11 @@ git_repository(
 load("//thirdparty/pip/tools:rules.bzl", "pip_tools_repositories")
 
 pip_tools_repositories()
+
+load("//download:rules.bzl", "pip_requirements")
+
+pip_requirements(
+    name = "pip3",
+    requirements = "//thirdparty/pip/3/osx:requirements.txt",
+    python_interpreter = "python3",
+)

@@ -90,6 +90,8 @@ def create_bazel_build_file(distribution):
         for req in distribution.requires()
     )
 
+    # Files with spaces in the name must be excluded
+    # https://github.com/bazelbuild/bazel/issues/374
     contents = textwrap.dedent("""
         py_library(
             name = "{name}",

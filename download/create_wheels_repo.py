@@ -61,8 +61,19 @@ def unpack_wheel(wheel_path, repository_directory):
     try:
         return next(pkg_resources.find_distributions(package_directory))
     except StopIteration:
-        # TODO(): raise custom exception
-        raise
+        raise DistributionNotFoundError(package_directory)
+
+
+class DistributionNotFoundError(Exception):
+
+    def __init__(self, package_directory):
+        super(DistributionNotFoundError, self).__init__()
+        self.package_directory = package_directory
+
+    def __str__(self):
+        return "Could not find in Python distribution in directory {}".format(
+            self.package_directory
+        )
 
 
 def normalize_distribution_name(name):

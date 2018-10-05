@@ -8,14 +8,6 @@ import textwrap
 from wheel import wheelfile
 
 
-PACKAGES_TO_IGNORE = [
-    'pip',
-    'pkg-resources',
-    'setuptools',
-    'wheel',
-]
-
-
 def main():
     args = parse_args()
     download_wheels(args.requirements, args.repository_directory)
@@ -55,9 +47,7 @@ def find_wheels(directory):
 
 def unpack_wheel_into_bazel_package(wheel_path, repository_directory):
     distribution = unpack_wheel(wheel_path, repository_directory)
-
-    if distribution.project_name not in PACKAGES_TO_IGNORE:
-        create_bazel_build_file(distribution)
+    create_bazel_build_file(distribution)
 
 
 def unpack_wheel(wheel_path, repository_directory):
@@ -87,7 +77,6 @@ def create_bazel_build_file(distribution):
     dependencies = ", ".join(
         '"//{}"'.format(normalize_distribution_name(req.project_name))
         for req in distribution.requires()
-        if req.project_name not in PACKAGES_TO_IGNORE
     )
 
     contents = textwrap.dedent("""
@@ -96,7 +85,10 @@ def create_bazel_build_file(distribution):
             srcs = glob(["**/*.py"]),
             data = glob(
                 ["**/*"],
-                exclude = ["**/*.py", "BUILD", "WORKSPACE", "*.whl.zip"],
+                exclude = [
+                    "**/*.py",
+                    "**/* *",  # Bazel runfiles cannot have spaces in the name
+                ],
             ),
             deps = [{deps}],
             imports = ["."],

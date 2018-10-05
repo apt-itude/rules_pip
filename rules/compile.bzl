@@ -8,7 +8,7 @@ def _get_path_relative_to_workspace(path, ctx):
         return paths.join(ctx.label.package, path)
 
 
-def _compile_requirements_impl(ctx):
+def _compile_pip_requirements_impl(ctx):
     out_file = ctx.actions.declare_file(ctx.label.name + ".sh")
 
     requirements_txt_path = _get_path_relative_to_workspace(
@@ -41,8 +41,8 @@ def _compile_requirements_impl(ctx):
     )]
 
 
-compile_requirements = rule(
-    implementation = _compile_requirements_impl,
+compile_pip_requirements = rule(
+    implementation = _compile_pip_requirements_impl,
     attrs = {
         "requirements_in": attr.label(
             allow_single_file = [".in"],
@@ -51,12 +51,12 @@ compile_requirements = rule(
         "requirements_txt": attr.string(default = "requirements.txt"),
         "python_interpreter": attr.string(default = "python"),
         "_pip_compile": attr.label(
-            default = "//compile",
+            default = "//src/compile",
             cfg = "host",
             executable = True,
         ),
         "_template": attr.label(
-            default = "//compile:main_template.sh",
+            default = "//src/compile:main_template.sh",
             allow_single_file = True,
         )
     },

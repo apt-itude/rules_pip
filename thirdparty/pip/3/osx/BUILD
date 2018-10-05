@@ -1,4 +1,4 @@
-load("//compile:compile.bzl", "compile_requirements")
+load("//compile:rules.bzl", "compile_requirements")
 
 compile_requirements(
     name = "compile",

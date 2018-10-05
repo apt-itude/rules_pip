@@ -6,10 +6,6 @@ git_repository(
     tag = "0.5.0",
 )
 
-load("//thirdparty/pip/tools:rules.bzl", "pip_tools_repositories")
-
-pip_tools_repositories()
-
 load("//download:rules.bzl", "pip_requirements")
 
 pip_requirements(

@@ -1,3 +1,4 @@
+pip-tools
 pytest
 pytest-mock
 pyyaml

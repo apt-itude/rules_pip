@@ -4,7 +4,7 @@ Prints the name of the requirements file that should be generated for the
 current environment
 """
 
-from piprules.repository import requirements
+from piprules import requirements
 
 
 if __name__ == '__main__':

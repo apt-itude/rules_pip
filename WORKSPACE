@@ -12,12 +12,15 @@ git_repository(
     tag = "1.3.0",
 )
 
-load("//rules:repository.bzl", "pip_repository")
+load("//rules:repository.bzl", "pip_repository", "rules_pip_repositories")
+
+rules_pip_repositories()
 
 pip_repository(
     name = "pip3",
     requirements = [
-        "//thirdparty/pip:requirements-cp37-cp37m-macosx_10_14_x86_64.txt",
+        "//thirdparty/pip:requirements-cp36-cp36m-linux_x86_64.txt",
+        "//thirdparty/pip:requirements-cp36-cp36m-macosx_10_14_x86_64.txt",
     ],
-    python_interpreter = "python3",
+    python_interpreter = "python3.6",
 )

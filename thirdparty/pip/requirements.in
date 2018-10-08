@@ -1,8 +1,4 @@
-attrs
-pathlib2 ; python_version < "3.0"
 pip-tools
 pytest
 pytest-mock
 pyyaml
-six
-wheel

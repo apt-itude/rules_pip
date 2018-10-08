@@ -1,6 +1,6 @@
 import argparse
 
-from piprules.repository import bazel, requirements, wheels
+from piprules import bazel, requirements, wheels
 
 
 def main():

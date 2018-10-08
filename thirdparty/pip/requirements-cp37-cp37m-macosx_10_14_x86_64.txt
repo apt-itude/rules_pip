@@ -1,12 +1,12 @@
 atomicwrites==1.2.1       # via pytest
-attrs==18.2.0             # via pytest
+attrs==18.2.0
 click==7.0                # via pip-tools
 more-itertools==4.3.0     # via pytest
-pip-tools==3.0.0
+pip-tools==3.1.0
 pluggy==0.7.1             # via pytest
 py==1.6.0                 # via pytest
 pytest-mock==1.10.0
 pytest==3.8.2
 pyyaml==3.13
-six==1.11.0               # via more-itertools, pip-tools, pytest
+six==1.11.0
 wheel==0.32.1

@@ -1,1 +1,9 @@
-exports_files(["requirements.in"])
+load("//rules:compile.bzl", "compile_pip_requirements")
+
+compile_pip_requirements(
+    name = "compile3",
+    requirements_in = ":requirements.in",
+    python_interpreter = "python3",
+)
+
+exports_files(glob(["requirements*"]))

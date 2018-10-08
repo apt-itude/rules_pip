@@ -16,6 +16,8 @@ load("//rules:repository.bzl", "pip_repository")
 
 pip_repository(
     name = "pip3",
-    requirements = "//thirdparty/pip/3/osx:requirements.txt",
+    requirements = [
+        "//thirdparty/pip:requirements-cp37-cp37m-macosx_10_14_x86_64.txt",
+    ],
     python_interpreter = "python3",
 )

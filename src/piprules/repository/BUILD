@@ -1,11 +1,12 @@
 load("@subpar//:subpar.bzl", "par_binary")
 
-par_binary(
-    name = "create_pip_repository",
-    srcs = ["create.py"],
-    main = "create.py",
+py_library(
+    name = "repository",
+    srcs = glob(["*.py"]),
     deps = [
         "@pip3//wheel",
+        "//src/piprules/common",
     ],
+    imports = ["../../"],
     visibility = ["//visibility:public"],
 )

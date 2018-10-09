@@ -45,9 +45,9 @@ buildifier_dependencies()
 
 # Load PIP repositories
 
-load("//rules:repository.bzl", "pip_repository", "rules_pip_repositories")
+load("//rules:repository.bzl", "pip_repository", "pip_rules_dependencies")
 
-rules_pip_repositories()
+pip_rules_dependencies()
 
 pip_repository(
     name = "pip3",

@@ -52,7 +52,7 @@ py_library(
 )
 """
 
-def rules_pip_repositories():
+def pip_rules_dependencies():
     existing_rules = native.existing_rules()
 
     if "pip_pip" not in existing_rules:

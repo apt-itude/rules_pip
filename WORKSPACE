@@ -1,16 +1,12 @@
 workspace(name = "com_apt_itude_rules_pypi")
 
-git_repository(
-    name = "bazel_skylib",
-    remote = "https://github.com/bazelbuild/bazel-skylib.git",
-    tag = "0.5.0",
-)
+# Dependencies for this repository
 
-git_repository(
-    name = "subpar",
-    remote = "https://github.com/google/subpar",
-    tag = "1.3.0",
-)
+load("//rules:dependencies.bzl", "pip_rules_dependencies")
+
+pip_rules_dependencies()
+
+# Buildifier repositories
 
 http_archive(
     name = "io_bazel_rules_go",
@@ -23,8 +19,6 @@ http_archive(
     strip_prefix = "buildtools-0.15.0",
     url = "https://github.com/bazelbuild/buildtools/archive/0.15.0.zip",
 )
-
-# Load buildifier dependencies
 
 load(
     "@io_bazel_rules_go//go:def.bzl",
@@ -43,11 +37,9 @@ load(
 
 buildifier_dependencies()
 
-# Load PIP repositories
+# PIP repositories
 
-load("//rules:repository.bzl", "pip_repository", "pip_rules_dependencies")
-
-pip_rules_dependencies()
+load("//rules:repository.bzl", "pip_repository")
 
 pip_repository(
     name = "pip2",

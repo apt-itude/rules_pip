@@ -1,3 +1,8 @@
+"""
+This tests that setuptools entry points work correctly since pytest plugins
+like pytest-mock rely on that functionality
+"""
+
 import sys
 
 import pytest

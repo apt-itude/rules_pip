@@ -1,3 +1,8 @@
+"""
+This tests conditional dependencies based on Python runtime. The pathlib2
+module is only included if running Python 2.
+"""
+
 import sys
 
 if sys.version_info.major == 2:

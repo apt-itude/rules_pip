@@ -9,13 +9,15 @@ def _get_path_relative_to_workspace(path, ctx):
 def _compile_pip_requirements_impl(ctx):
     out_file = ctx.actions.declare_file(ctx.label.name + ".sh")
 
-    output_dir = _get_path_relative_to_workspace(ctx.attr.output_dir, ctx)
+    requirements_txt_path = _get_path_relative_to_workspace(
+        ctx.attr.requirements_txt,
+        ctx,
+    )
 
     substitutions = {
         "@@REQUIREMENTS_IN_PATH@@": ctx.file.requirements_in.short_path,
-        "@@OUTPUT_DIR@@": output_dir,
+        "@@REQUIREMENTS_TXT_PATH@@": requirements_txt_path,
         "@@PYTHON_INTERPRETER_PATH@@": ctx.attr.python_interpreter,
-        "@@GENERATE_REQUIREMENTS_FILE_NAME_BINARY@@": ctx.executable._generate_file_name.short_path,
         "@@PIP_COMPILE_BINARY@@": ctx.executable._pip_compile.short_path,
     }
 
@@ -29,7 +31,6 @@ def _compile_pip_requirements_impl(ctx):
     runfiles = ctx.runfiles(
         files = (
             ctx.files.requirements_in +
-            ctx.files._generate_file_name +
             ctx.files._pip_compile
         ),
     )
@@ -47,13 +48,8 @@ compile_pip_requirements = rule(
             allow_single_file = [".in"],
             mandatory = True,
         ),
-        "output_dir": attr.string(default = ""),
+        "requirements_txt": attr.string(default = "requirements.txt"),
         "python_interpreter": attr.string(default = "python"),
-        "_generate_file_name": attr.label(
-            default = "//src/bin:generate_requirements_file_name.par",
-            cfg = "host",
-            executable = True,
-        ),
         "_pip_compile": attr.label(
             default = "//src/bin:compile_pip_requirements.par",
             cfg = "host",

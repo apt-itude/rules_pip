@@ -1,12 +1,11 @@
 import argparse
 
-from piprules import bazel, requirements, wheels
+from piprules import bazel, wheels
 
 
 def main():
     args = parse_args()
-    requirements_file_path = requirements.choose_file(args.requirements)
-    wheels.download(args.repository_directory, requirements_file_path)
+    wheels.download(args.repository_directory, args.requirements)
     unpack_wheels_into_bazel_packages(args.repository_directory)
 
 
@@ -14,7 +13,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("repository_directory")
-    parser.add_argument("requirements", nargs="+")
+    parser.add_argument("requirements")
 
     return parser.parse_args()
 

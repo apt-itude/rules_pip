@@ -19,12 +19,3 @@ par_binary(
         "//src/piprules",
     ],
 )
-
-par_binary(
-    name = "generate_requirements_file_name",
-    srcs = ["generate_requirements_file_name.py"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//src/piprules",
-    ],
-)

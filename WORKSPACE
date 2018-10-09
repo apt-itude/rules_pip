@@ -52,8 +52,8 @@ pip_rules_dependencies()
 pip_repository(
     name = "pip3",
     python_interpreter = "python3.6",
-    requirements = [
-        "//thirdparty/pip:requirements-cp36-cp36m-linux_x86_64.txt",
-        "//thirdparty/pip:requirements-cp36-cp36m-macosx_10_14_x86_64.txt",
-    ],
+    requirements_per_platform = {
+        "//thirdparty/pip/3:requirements-linux.txt": "linux",
+        "//thirdparty/pip/3:requirements-osx.txt": "osx",
+    },
 )

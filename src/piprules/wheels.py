@@ -2,6 +2,7 @@ import glob
 import os
 import pkg_resources
 
+from pip._internal import main as pip_main
 from wheel import wheelfile
 
 from piprules import util
@@ -13,9 +14,7 @@ class Error(Exception):
 
 
 def download(dest_directory, requirements_file_path):
-    util.execute_python_module(
-        "pip", "wheel", "-w", dest_directory, "-r", requirements_file_path
-    )
+    pip_main(args=["wheel", "-w", dest_directory, "-r", requirements_file_path])
 
 
 def find_all(directory):

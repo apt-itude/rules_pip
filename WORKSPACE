@@ -50,6 +50,15 @@ load("//rules:repository.bzl", "pip_repository", "pip_rules_dependencies")
 pip_rules_dependencies()
 
 pip_repository(
+    name = "pip2",
+    python_interpreter = "python2.7",
+    requirements_per_platform = {
+        "//thirdparty/pip/2:requirements-linux.txt": "linux",
+        "//thirdparty/pip/2:requirements-osx.txt": "osx",
+    },
+)
+
+pip_repository(
     name = "pip3",
     python_interpreter = "python3.6",
     requirements_per_platform = {

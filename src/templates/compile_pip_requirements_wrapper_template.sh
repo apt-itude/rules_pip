@@ -17,5 +17,7 @@ echo "Compiling $REQUIREMENTS_TXT_PATH"
 $PYTHON_INTERPRETER_PATH $PIP_COMPILE_BINARY \
     --output-file $REQUIREMENTS_TXT_PATH \
     --no-header \
+    --generate-hashes \
+    --allow-unsafe \
     "$@" \
     $REQUIREMENTS_IN_PATH

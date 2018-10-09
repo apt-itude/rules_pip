@@ -1,12 +1,10 @@
 load("@bazel_skylib//lib:paths.bzl", "paths")
 
-
 def _get_path_relative_to_workspace(path, ctx):
     if paths.is_absolute(path):
         return paths.relativize(path, "/")
     else:
         return paths.join(ctx.label.package, path)
-
 
 def _compile_pip_requirements_impl(ctx):
     out_file = ctx.actions.declare_file(ctx.label.name + ".sh")
@@ -33,7 +31,7 @@ def _compile_pip_requirements_impl(ctx):
             ctx.files.requirements_in +
             ctx.files._generate_file_name +
             ctx.files._pip_compile
-        )
+        ),
     )
 
     return [DefaultInfo(
@@ -41,7 +39,6 @@ def _compile_pip_requirements_impl(ctx):
         runfiles = runfiles,
         executable = out_file,
     )]
-
 
 compile_pip_requirements = rule(
     implementation = _compile_pip_requirements_impl,
@@ -65,7 +62,7 @@ compile_pip_requirements = rule(
         "_template": attr.label(
             default = "//src/templates:compile_pip_requirements_wrapper_template.sh",
             allow_single_file = True,
-        )
+        ),
     },
     executable = True,
 )

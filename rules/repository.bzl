@@ -14,8 +14,7 @@ def _pip_repository_impl(repo_ctx):
         repo_ctx.attr.python_interpreter,
         create_repo_exe_path,
         repo_directory,
-    ]+ requirements_paths)
-
+    ] + requirements_paths)
 
 pip_repository = repository_rule(
     implementation = _pip_repository_impl,
@@ -30,10 +29,9 @@ pip_repository = repository_rule(
             default = "//tools:create_pip_repository.par",
             executable = True,
             cfg = "host",
-        )
-    }
+        ),
+    },
 )
-
 
 _BUILD_FILE_CONTENT = """
 py_library(
@@ -53,7 +51,6 @@ py_library(
     visibility = ["//visibility:public"],
 )
 """
-
 
 def rules_pip_repositories():
     existing_rules = native.existing_rules()

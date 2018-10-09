@@ -5,5 +5,5 @@ py_test(
         "@pip3//pytest",
         "@pip3//pytest_mock",
         "@pip3//pyyaml",
-    ]
+    ],
 )

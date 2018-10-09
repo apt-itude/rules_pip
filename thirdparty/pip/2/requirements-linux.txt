@@ -1,5 +1,3 @@
---index-url https://pip.lab.128technology.com/128t/stable/
-
 atomicwrites==1.2.1 \
     --hash=sha256:0312ad34fcad8fac3704d441f7b317e50af620823353ec657a53e981f92920c0 \
     --hash=sha256:ec9ae8adaae229e4f8446952d204a3e4b5fdd2d099f9be3aaf556120135fb3ee \

@@ -1,4 +1,4 @@
-workspace(name = "com_apt_itude_rules_pypi")
+workspace(name = "com_apt_itude_rules_pip")
 
 # Dependencies for this repository
 

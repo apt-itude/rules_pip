@@ -9,12 +9,12 @@ This repository is designed to be compatible with both Python 2 and 3 in a singl
 Add the following to your `WORKSPACE` file:
 ```
 git_repository(
-    name = "com_apt_itude_rules_pypi",
+    name = "com_apt_itude_rules_pip",
     commit = "e5ed5e72bf5a7521244e1d2119821628bbf17263",
     remote = "https://github.com/apt-itude/rules_pip.git",
 )
 
-load("@com_apt_itude_rules_pypi//rules:dependencies.bzl", "pip_rules_dependencies")
+load("@com_apt_itude_rules_pip//rules:dependencies.bzl", "pip_rules_dependencies")
 
 pip_rules_dependencies()
 ```

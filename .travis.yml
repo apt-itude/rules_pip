@@ -1,0 +1,11 @@
+os:
+  - osx
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap bazelbuild/tap; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap-pin bazelbuild/tap; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install bazel; fi
+
+script:
+  - bazel test ... --python_top=//:python2
+  - bazel test ... --python_top=//:python3

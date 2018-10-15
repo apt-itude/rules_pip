@@ -15,6 +15,7 @@ par_binary(
     name = "create_pip_repository",
     srcs = ["create_pip_repository.py"],
     visibility = ["//visibility:public"],
+    zip_safe = False,
     deps = [
         "//src/piprules",
     ],

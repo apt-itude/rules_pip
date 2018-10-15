@@ -1,4 +1,5 @@
 load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
+load("//:python.bzl", "PYTHON2", "PYTHON3")
 
 # Run this target to auto-format all Bazel files
 buildifier(name = "format")
@@ -19,8 +20,8 @@ py_runtime(
     name = "python2",
     files = [],
     interpreter_path = select({
-        ":linux": "/usr/bin/python2.7",
-        ":osx": "/usr/local/bin/python2.7",
+        ":linux": "/usr/bin/" + PYTHON2,
+        ":osx": "/usr/local/bin/" + PYTHON2,
     }),
     visibility = ["//visibility:public"],
 )
@@ -29,8 +30,8 @@ py_runtime(
     name = "python3",
     files = [],
     interpreter_path = select({
-        ":linux": "/usr/bin/python3.6",
-        ":osx": "/usr/local/bin/python3.6",
+        ":linux": "/usr/bin/" + PYTHON3,
+        ":osx": "/usr/local/bin/" + PYTHON3,
     }),
     visibility = ["//visibility:public"],
 )

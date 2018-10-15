@@ -32,6 +32,15 @@ def pip_rules_dependencies():
             type = "zip",
         )
 
+    if "pip_setuptools" not in existing_rules:
+        http_archive(
+            name = "pip_setuptools",
+            url = "https://files.pythonhosted.org/packages/96/06/c8ee69628191285ddddffb277bd5abdf769166e7a14b867c2a172f0175b1/setuptools-40.4.3-py2.py3-none-any.whl",
+            sha256 = "ce4137d58b444bac11a31d4e0c1805c69d89e8ed4e91fde1999674ecc2f6f9ff",
+            build_file_content = _BUILD_FILE_CONTENT,
+            type = "zip",
+        )
+
     if "pip_wheel" not in existing_rules:
         http_archive(
             name = "pip_wheel",

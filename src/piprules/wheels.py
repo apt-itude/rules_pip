@@ -1,3 +1,4 @@
+import contextlib
 import glob
 import os
 import pkg_resources
@@ -14,7 +15,19 @@ class Error(Exception):
 
 
 def download(dest_directory, requirements_file_path):
-    pip_main(args=["wheel", "-w", dest_directory, "-r", requirements_file_path])
+    with _add_pip_import_paths_to_pythonpath():
+        pip_main(args=["wheel", "-w", dest_directory, "-r", requirements_file_path])
+
+
+@contextlib.contextmanager
+def _add_pip_import_paths_to_pythonpath():
+    import pip
+    import setuptools
+    import wheel
+
+    import_paths = [util.get_import_path_of_module(m) for m in [pip, setuptools, wheel]]
+    with util.prepend_to_pythonpath(import_paths):
+        yield
 
 
 def find_all(directory):
@@ -37,7 +50,6 @@ def unpack(wheel_path, dest_directory):
 
 
 class DistributionNotFoundError(Error):
-
     def __init__(self, package_directory):
         super(DistributionNotFoundError, self).__init__()
         self.package_directory = package_directory

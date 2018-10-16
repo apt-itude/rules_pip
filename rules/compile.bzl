@@ -51,7 +51,8 @@ compile_pip_requirements = rule(
         "requirements_txt": attr.string(default = "requirements.txt"),
         "python_interpreter": attr.string(default = "python"),
         "_pip_compile": attr.label(
-            default = "//src/bin:compile_pip_requirements.par",
+            default = "//tools:compile_pip_requirements.par",
+            allow_single_file = True,
             cfg = "host",
             executable = True,
         ),

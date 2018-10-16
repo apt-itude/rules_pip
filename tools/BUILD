@@ -1,1 +1,4 @@
-exports_files(["create_pip_repository.par"])
+exports_files([
+    "compile_pip_requirements.par",
+    "create_pip_repository.par",
+])

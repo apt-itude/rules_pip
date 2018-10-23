@@ -1,3 +1,4 @@
+isort
 pathlib2 ; python_version < "3.0"
 pytest
 pytest-mock

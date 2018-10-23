@@ -9,9 +9,13 @@ def create_build_file(distribution):
 
     library_name = util.normalize_distribution_name(distribution.project_name)
 
-    dependencies = ", ".join(
-        '"//{}"'.format(util.normalize_distribution_name(req.project_name))
+    dependency_names = set(
+        util.normalize_distribution_name(req.project_name)
         for req in distribution.requires()
+    )
+    dependencies = ", ".join(
+        '"//{}"'.format(name)
+        for name in dependency_names
     )
 
     # Files with spaces in the name must be excluded

@@ -1,5 +1,6 @@
 isort
 pathlib2 ; python_version < "3.0"
+pyang
 pytest
 pytest-mock
 pyyaml

@@ -1,0 +1,1 @@
+test --python_top=//runtime:dynamic --build_tests_only

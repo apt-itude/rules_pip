@@ -1,3 +1,4 @@
+import errno
 import contextlib
 import os
 
@@ -8,6 +9,14 @@ def normalize_distribution_name(name):
 
 def get_path_stem(path):
     return os.path.splitext(os.path.basename(path))[0]
+
+
+def ensure_directory_exists(path):
+    try:
+        os.makedirs(path)
+    except OSError as err:
+        if err.errno != errno.EEXIST:
+            raise err
 
 
 def get_import_path_of_module(module):

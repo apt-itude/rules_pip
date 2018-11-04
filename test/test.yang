@@ -1,0 +1,14 @@
+module test {
+    yang-version 1;
+
+    namespace "urn:xml:ns:test";
+
+    prefix test;
+
+    container test-container {
+
+        leaf test-leaf {
+            type string;
+        }
+    }
+}

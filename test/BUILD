@@ -56,20 +56,34 @@ pytest_test(
     python_version = 3,
 )
 
+py_binary(
+    name = "pyang2",
+    srcs = ["@pip2//pyang:script_pyang.py"],
+    main = "@pip2//pyang:script_pyang.py",
+    deps = ["@pip2//pyang"],
+)
+
 genrule(
     name = "test-yin-2",
     srcs = ["test.yang"],
     outs = ["test-2.yin"],
-    tools = ["@pip2//pyang/scripts:pyang"],
-    cmd = "$(location @pip2//pyang/scripts:pyang) -f yin -o $@ $<",
+    tools = [":pyang2"],
+    cmd = "$(location :pyang2) -f yin -o $@ $<",
+)
+
+py_binary(
+    name = "pyang3",
+    srcs = ["@pip3//pyang:script_pyang.py"],
+    main = "@pip3//pyang:script_pyang.py",
+    deps = ["@pip3//pyang"],
 )
 
 genrule(
     name = "test-yin-3",
     srcs = ["test.yang"],
     outs = ["test-3.yin"],
-    tools = ["@pip3//pyang/scripts:pyang"],
-    cmd = "$(location @pip3//pyang/scripts:pyang) -f yin -o $@ $<",
+    tools = [":pyang3"],
+    cmd = "$(location :pyang3) -f yin -o $@ $<",
 )
 
 pytest_test(

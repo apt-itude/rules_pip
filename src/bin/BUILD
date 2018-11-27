@@ -20,3 +20,9 @@ par_binary(
         "//src/piprules",
     ],
 )
+
+py_binary(
+    name = "replace_shebang",
+    srcs = ["replace_shebang.py"],
+    visibility = ["//:__subpackages__"],
+)

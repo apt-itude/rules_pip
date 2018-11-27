@@ -1,15 +1,9 @@
 import glob
-import logging
 import os
-import re
 import shutil
-import sys
 import textwrap
 
 from piprules import util
-
-
-LOG = logging.getLogger(__name__)
 
 
 def generate_package_for_python_distribution(distribution):
@@ -34,6 +28,10 @@ class _PyDistPackageGenerator(object):
         return util.normalize_distribution_name(self.distribution.project_name)
 
     @property
+    def scripts_package_path(self):
+        return os.path.join(self.base_package_path, "scripts")
+
+    @property
     def scripts_source_pattern(self):
         return os.path.join(self.base_package_path, "*.data", "scripts", "*")
 
@@ -42,27 +40,18 @@ class _PyDistPackageGenerator(object):
         return self.base_package_name
 
     @property
-    def library_dependency_names(self):
+    def library_dependencies(self):
         return set(
-            util.normalize_distribution_name(req.project_name)
+            _LibraryDependency.from_distribution_requirement(req)
             for req in self.distribution.requires()
         )
 
-    @property
-    def library_dependency_labels(self):
-        return ['"//{}"'.format(name) for name in self.library_dependency_names]
-
     def generate(self):
-        self._copy_scripts()
         self._create_base_package_build_file()
 
-    def _copy_scripts(self):
-        for script in self._find_scripts():
-            script.copy_to_package(self.base_package_path)
-
-    def _find_scripts(self):
-        for path in glob.glob(self.scripts_source_pattern):
-            yield _Script(path)
+        scripts = self._find_scripts()
+        if scripts:
+            _ScriptsPackageGenerator(self.scripts_package_path, scripts).generate()
 
     def _create_base_package_build_file(self):
         # Files with spaces in the name must be excluded
@@ -85,24 +74,67 @@ class _PyDistPackageGenerator(object):
             )
         """).lstrip().format(
             name=self.library_name,
-            deps=", ".join(self.library_dependency_labels),
+            deps=_create_string_list(dep.label for dep in self.library_dependencies),
         )
-
-        script_files = ", ".join(script.label for script in self._find_scripts())
-        if script_files:
-            contents += textwrap.dedent("""
-                exports_files([{script_files}])
-            """).format(
-                script_files=script_files
-            )
 
         with open(self.base_package_build_file_path, mode="w") as build_file:
             build_file.write(contents)
 
+    def _find_scripts(self):
+        return [_Script(path) for path in glob.glob(self.scripts_source_pattern)]
+
+
+class _LibraryDependency(object):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __hash__(self):
+        return hash(self.name)
+
+    @classmethod
+    def from_distribution_requirement(cls, requirement):
+        return cls(util.normalize_distribution_name(requirement.project_name))
+
+    @property
+    def label(self):
+        return "//{}".format(self.name)
+
+
+class _ScriptsPackageGenerator(object):
+
+    def __init__(self, package_path, scripts):
+        self.package_path = package_path
+        self.scripts = scripts
+
+    @property
+    def build_file_path(self):
+        return os.path.join(self.package_path, "BUILD")
+
+    def generate(self):
+        util.ensure_directory_exists(self.package_path)
+        self._copy_scripts_to_package()
+        self._create_scripts_package_build_file()
+
+    def _copy_scripts_to_package(self):
+        for script in self.scripts:
+            shutil.copy(script.original_path, self.package_path)
+
+    def _create_scripts_package_build_file(self):
+        contents = textwrap.dedent("""
+            exports_files([{script_files}])
+        """).lstrip().format(
+            script_files=_create_string_list(script.name for script in self.scripts)
+        )
+
+        with open(self.build_file_path, mode="w") as build_file:
+            build_file.write(contents)
+
 
 class _Script(object):
-
-    SHEBANG_REGEX = re.compile(r'^#!.*')
 
     def __init__(self, original_path):
         self.original_path = original_path
@@ -111,35 +143,10 @@ class _Script(object):
     def name(self):
         return util.get_path_stem(self.original_path)
 
-    @property
-    def file_name(self):
-        return "script_{}.py".format(self.name)
 
-    @property
-    def label(self):
-        return '"{}"'.format(self.file_name)
-
-    def copy_to_package(self, scripts_package_path):
-        new_path = os.path.join(scripts_package_path, self.file_name)
-        shutil.copy(self.original_path, new_path)
-        self._replace_shebang(new_path)
-
-    def _replace_shebang(self, path):
-        with open(path) as script:
-            contents = script.read()
-
-        new_contents = self.SHEBANG_REGEX.sub(
-            _make_shebang_for_current_interpreter(),
-            contents,
-        )
-
-        with open(path, mode="w") as script:
-            script.write(new_contents)
+def _create_string_list(values):
+    return ", ".join(_quote(value) for value in values)
 
 
-def _make_shebang_for_current_interpreter():
-    return "#!/usr/bin/env {}".format(_get_current_interpreter())
-
-
-def _get_current_interpreter():
-    return "python{}.{}".format(sys.version_info.major, sys.version_info.minor)
+def _quote(value):
+    return '"{}"'.format(value)

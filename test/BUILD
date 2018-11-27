@@ -1,4 +1,4 @@
-load("//:python.bzl", "PYTHON3")
+load("//:python.bzl", "PYTHON2", "PYTHON3")
 load("//tools/pytest:rules.bzl", "pytest_test")
 
 pytest_test(
@@ -56,10 +56,17 @@ pytest_test(
     python_version = 3,
 )
 
+genrule(
+    name = "pyang2_script",
+    srcs = ["@pip2//pyang/scripts:pyang"],
+    outs = ["pyang2.py"],
+    tools = ["//src/bin:replace_shebang"],
+    cmd = "$(location //src/bin:replace_shebang) $< $@ %s" % PYTHON2,
+)
+
 py_binary(
     name = "pyang2",
-    srcs = ["@pip2//pyang:script_pyang.py"],
-    main = "@pip2//pyang:script_pyang.py",
+    srcs = [":pyang2_script"],
     deps = ["@pip2//pyang"],
 )
 
@@ -71,10 +78,17 @@ genrule(
     cmd = "$(location :pyang2) -f yin -o $@ $<",
 )
 
+genrule(
+    name = "pyang3_script",
+    srcs = ["@pip3//pyang/scripts:pyang"],
+    outs = ["pyang3.py"],
+    tools = ["//src/bin:replace_shebang"],
+    cmd = "$(location //src/bin:replace_shebang) $< $@ %s" % PYTHON3,
+)
+
 py_binary(
     name = "pyang3",
-    srcs = ["@pip3//pyang:script_pyang.py"],
-    main = "@pip3//pyang:script_pyang.py",
+    srcs = [":pyang3_script"],
     deps = ["@pip3//pyang"],
 )
 

@@ -28,12 +28,8 @@ class _PyDistPackageGenerator(object):
         return util.normalize_distribution_name(self.distribution.project_name)
 
     @property
-    def scripts_package_path(self):
-        return os.path.join(self.base_package_path, "scripts")
-
-    @property
-    def scripts_source_pattern(self):
-        return os.path.join(self.base_package_path, "*.data", "scripts", "*")
+    def data_source_pattern(self):
+        return os.path.join(self.base_package_path, "*.data", "*")
 
     @property
     def library_name(self):
@@ -49,9 +45,8 @@ class _PyDistPackageGenerator(object):
     def generate(self):
         self._create_base_package_build_file()
 
-        scripts = self._find_scripts()
-        if scripts:
-            _ScriptsPackageGenerator(self.scripts_package_path, scripts).generate()
+        for data_directory in self._find_data_directories():
+            _DataPackageGenerator(self.base_package_path, data_directory).generate()
 
     def _create_base_package_build_file(self):
         # Files with spaces in the name must be excluded
@@ -80,8 +75,8 @@ class _PyDistPackageGenerator(object):
         with open(self.base_package_build_file_path, mode="w") as build_file:
             build_file.write(contents)
 
-    def _find_scripts(self):
-        return [_Script(path) for path in glob.glob(self.scripts_source_pattern)]
+    def _find_data_directories(self):
+        return glob.glob(self.data_source_pattern)
 
 
 class _LibraryDependency(object):
@@ -104,44 +99,68 @@ class _LibraryDependency(object):
         return "//{}".format(self.name)
 
 
-class _ScriptsPackageGenerator(object):
+class _DataPackageGenerator(object):
 
-    def __init__(self, package_path, scripts):
+    def __init__(self, base_package_path, data_directory):
+        self.base_package_path = base_package_path
+        self.data_directory = data_directory
+
+    @property
+    def package_name(self):
+        return os.path.basename(self.data_directory)
+
+    @property
+    def package_path(self):
+        return os.path.join(self.base_package_path, self.package_name)
+
+    @property
+    def symlink_target(self):
+        return os.path.relpath(self.data_directory, start=self.base_package_path)
+
+    def generate(self):
+        os.symlink(self.symlink_target, self.package_path)
+        self._create_build_files()
+
+    def _create_build_files(self):
+        for dirpath, dirnames, filenames in os.walk(self.package_path):
+            _DataPackageBuildFileGenerator(dirpath, filenames).generate()
+
+
+class _DataPackageBuildFileGenerator(object):
+
+    def __init__(self, package_path, filenames):
         self.package_path = package_path
-        self.scripts = scripts
+        self.filenames = filenames
+
+    @property
+    def package_name(self):
+        return os.path.basename(self.package_path)
 
     @property
     def build_file_path(self):
         return os.path.join(self.package_path, "BUILD")
 
     def generate(self):
-        util.ensure_directory_exists(self.package_path)
-        self._copy_scripts_to_package()
-        self._create_scripts_package_build_file()
-
-    def _copy_scripts_to_package(self):
-        for script in self.scripts:
-            shutil.copy(script.original_path, self.package_path)
-
-    def _create_scripts_package_build_file(self):
-        contents = textwrap.dedent("""
-            exports_files([{script_files}])
-        """).lstrip().format(
-            script_files=_create_string_list(script.name for script in self.scripts)
-        )
+        contents = self._get_contents()
 
         with open(self.build_file_path, mode="w") as build_file:
             build_file.write(contents)
 
+    def _get_contents(self):
+        if not self.filenames:
+            return ""
 
-class _Script(object):
+        return textwrap.dedent("""
+            filegroup(
+                name = "{package_name}",
+                srcs = glob(["*"]),
+            )
 
-    def __init__(self, original_path):
-        self.original_path = original_path
-
-    @property
-    def name(self):
-        return util.get_path_stem(self.original_path)
+            exports_files([{data_files}])
+        """).lstrip().format(
+            package_name=self.package_name,
+            data_files=_create_string_list(self.filenames),
+        )
 
 
 def _create_string_list(values):

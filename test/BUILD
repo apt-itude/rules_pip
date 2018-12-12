@@ -72,8 +72,8 @@ py_binary(
 
 genrule(
     name = "test-yin-2",
-    srcs = ["test.yang"],
-    outs = ["test-2.yin"],
+    srcs = ["@pip2//pyang/data/share/yang/modules/ietf:ietf-yang-metadata.yang"],
+    outs = ["ietf-yang-metadata-2.yin"],
     tools = [":pyang2"],
     cmd = "$(location :pyang2) -f yin -o $@ $<",
 )
@@ -94,16 +94,17 @@ py_binary(
 
 genrule(
     name = "test-yin-3",
-    srcs = ["test.yang"],
-    outs = ["test-3.yin"],
+    srcs = ["@pip3//pyang/data/share/yang/modules/ietf:ietf-yang-metadata.yang"],
+    outs = ["ietf-yang-metadata-3.yin"],
     tools = [":pyang3"],
     cmd = "$(location :pyang3) -f yin -o $@ $<",
 )
 
 pytest_test(
-    name = "script_test",
-    src = "script_test.py",
+    name = "data_test",
+    src = "data_test.py",
     data = [
+        "ietf-yang-metadata.yin",
         ":test-yin-2",
         ":test-yin-3",
     ],

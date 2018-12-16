@@ -51,7 +51,7 @@ pip_repository = repository_rule(
             allow_files = True,
             allow_empty = False,
         ),
-        "python_interpreter": attr.string(default = "python"),
+        "python_interpreter": attr.string(default = "python3"),
         "_create_repo_exe": attr.label(
             default = "//tools:create_pip_repository.par",
             executable = True,

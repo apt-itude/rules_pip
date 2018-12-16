@@ -32,12 +32,14 @@ def _pip_repository_impl(repo_ctx):
             attr = "pip_repository",
         )
 
-    repo_ctx.execute([
+    r = repo_ctx.execute([
         repo_ctx.attr.python_interpreter,
         create_repo_exe_path,
         repo_directory,
         requirements_path,
     ])
+    if r.return_code:
+        fail(r.stderr)
 
 pip_repository = repository_rule(
     implementation = _pip_repository_impl,

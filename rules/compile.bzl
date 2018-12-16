@@ -32,6 +32,7 @@ def _compile_pip_requirements_impl(ctx):
     runfiles = ctx.runfiles(
         files = (
             ctx.files.requirements_in +
+            ctx.files.data +
             ctx.files._pip_compile
         ),
     )
@@ -49,6 +50,7 @@ compile_pip_requirements = rule(
             allow_single_file = [".in"],
             mandatory = True,
         ),
+        "data": attr.label_list(allow_files = True),
         "requirements_txt": attr.string(default = "requirements.txt"),
         "python_interpreter": attr.string(default = "python"),
         "header": attr.string(default = "# This file is generated code. DO NOT EDIT."),

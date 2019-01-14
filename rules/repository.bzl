@@ -37,7 +37,7 @@ def _pip_repository_impl(repo_ctx):
         create_repo_exe_path,
         repo_directory,
         requirements_path,
-    ])
+    ] + repo_ctx.attr.wheel_args)
 
 pip_repository = repository_rule(
     implementation = _pip_repository_impl,
@@ -50,6 +50,7 @@ pip_repository = repository_rule(
             allow_empty = False,
         ),
         "python_interpreter": attr.string(default = "python"),
+        "wheel_args": attr.string_list(),
         "_create_repo_exe": attr.label(
             default = "//tools:create_pip_repository.par",
             executable = True,

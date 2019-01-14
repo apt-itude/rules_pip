@@ -4,8 +4,8 @@ from piprules import bazel, wheels
 
 
 def main():
-    args = parse_args()
-    wheels.download(args.repository_directory, args.requirements)
+    args, extra_args = parse_args()
+    wheels.download(args.repository_directory, args.requirements, *extra_args)
     unpack_wheels_into_bazel_packages(args.repository_directory)
 
 
@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument("repository_directory")
     parser.add_argument("requirements")
 
-    return parser.parse_args()
+    return parser.parse_known_args()
 
 
 def unpack_wheels_into_bazel_packages(repository_directory):

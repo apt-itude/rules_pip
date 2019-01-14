@@ -14,9 +14,15 @@ class Error(Exception):
     """Base exception for the wheels module"""
 
 
-def download(dest_directory, requirements_file_path):
+def download(dest_directory, requirements_file_path, *extra_args):
     with _add_pip_import_paths_to_pythonpath():
-        pip_main(args=["wheel", "-w", dest_directory, "-r", requirements_file_path])
+        pip_main(
+            args=[
+                "wheel",
+                "-w", dest_directory,
+                "-r", requirements_file_path,
+            ] + list(extra_args)
+        )
 
 
 @contextlib.contextmanager

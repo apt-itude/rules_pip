@@ -2,13 +2,15 @@ os:
   - osx
 
 language:
-  - java
+  - generic
 
 addons:
   homebrew:
     update: true
     taps:
       - bazelbuild/tap
+    casks:
+      - java8
     packages:
       - bazel
       - python

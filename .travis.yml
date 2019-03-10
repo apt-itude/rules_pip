@@ -1,5 +1,6 @@
 os:
   - osx
+  - linux
 
 language:
   - generic
@@ -7,6 +8,14 @@ language:
 addons:
   homebrew:
     brewfile: .Brewfile.travis
+  apt:
+    sources:
+      - sourceline: 'deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8'
+        key_url: 'https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg'
+    packages:
+      - openjdk-8-jdk
+      - bazel
+
 
 script:
   - bazel test --config=travis ...

@@ -1,4 +1,4 @@
-tap "homebrew/cask"
+tap "homebrew/cask-versions"
 cask "java8"
 tap "bazelbuild/tap"
 brew "bazel"

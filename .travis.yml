@@ -6,7 +6,7 @@ language:
 
 addons:
   homebrew:
-    update: true
+    # update: true
     brewfile: .Brewfile.travis
 
 script:

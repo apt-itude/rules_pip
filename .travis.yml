@@ -1,18 +1,19 @@
 os:
   - osx
 
-osx_image: xcode9.3
-
 language: python
 
 python:
   - "2.7"
   - "3.7"
 
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap bazelbuild/tap; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap-pin bazelbuild/tap; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install bazel; fi
+addons:
+  homebrew:
+    update: true
+    taps:
+      - bazelbuild/tap
+    packages:
+      - bazel
 
 script:
   - bazel test ...

@@ -7,14 +7,7 @@ language:
 addons:
   homebrew:
     update: true
-    taps:
-      - bazelbuild/tap
-    casks:
-      - java8
-    packages:
-      - bazel
-      - python
-      - python@2
+    brewfile: .Brewfile.travis
 
 script:
   - bazel test ...

@@ -1,5 +1,6 @@
-tap "bazelbuild/tap"
+tap "homebrew/cask"
 cask "java8"
+tap "bazelbuild/tap"
 brew "bazel"
 brew "python"
 brew "python@2"

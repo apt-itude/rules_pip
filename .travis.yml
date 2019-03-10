@@ -4,9 +4,6 @@ os:
 language:
   - java
 
-jdk:
-  - oraclejdk8  # Building Bazel requires JDK8.
-
 addons:
   homebrew:
     update: true

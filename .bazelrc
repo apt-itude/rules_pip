@@ -1,4 +1,7 @@
 run --python_top=//runtime:dynamic
 test --python_top=//runtime:dynamic --build_tests_only
 
+# Control progress output when invoked by Travis
+build:travis --noshow_progress --show_task_finish
+
 try-import %workspace%/user.bazelrc

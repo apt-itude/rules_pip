@@ -6,8 +6,7 @@ language:
 
 addons:
   homebrew:
-    # update: true
     brewfile: .Brewfile.travis
 
 script:
-  - bazel test ...
+  - bazel test --config=travis ...

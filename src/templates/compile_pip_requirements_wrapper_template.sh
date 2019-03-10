@@ -18,3 +18,7 @@ $PYTHON_INTERPRETER_PATH $PIP_COMPILE_BINARY \
     --allow-unsafe \
     "$@" \
     $REQUIREMENTS_IN_PATH
+set -x
+echo "@@HEADER@@" > requirements.tmp
+cat $REQUIREMENTS_TXT_PATH >> requirements.tmp
+cp requirements.tmp $REQUIREMENTS_TXT_PATH

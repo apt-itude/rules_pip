@@ -2,6 +2,7 @@ workspace(name = "com_apt_itude_rules_pip")
 
 # Dependencies for this repository
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//rules:dependencies.bzl", "pip_rules_dependencies")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 

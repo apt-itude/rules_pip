@@ -19,6 +19,7 @@ def _compile_pip_requirements_impl(ctx):
         "@@REQUIREMENTS_TXT_PATH@@": requirements_txt_path,
         "@@PYTHON_INTERPRETER_PATH@@": ctx.attr.python_interpreter,
         "@@PIP_COMPILE_BINARY@@": ctx.executable._pip_compile.short_path,
+        "@@HEADER@@": ctx.attr.header,
     }
 
     ctx.actions.expand_template(
@@ -31,6 +32,7 @@ def _compile_pip_requirements_impl(ctx):
     runfiles = ctx.runfiles(
         files = (
             ctx.files.requirements_in +
+            ctx.files.data +
             ctx.files._pip_compile
         ),
     )
@@ -48,8 +50,10 @@ compile_pip_requirements = rule(
             allow_single_file = [".in"],
             mandatory = True,
         ),
+        "data": attr.label_list(allow_files = True),
         "requirements_txt": attr.string(default = "requirements.txt"),
         "python_interpreter": attr.string(default = "python"),
+        "header": attr.string(default = "# This file is generated code. DO NOT EDIT."),
         "_pip_compile": attr.label(
             default = "//tools:compile_pip_requirements.par",
             allow_single_file = True,

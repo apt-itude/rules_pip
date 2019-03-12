@@ -18,6 +18,9 @@ addons:
       - openjdk-8-jdk
       - bazel
 
+install:
+  - pyenv install 2.7.16
+  - pyenv install 3.6.7
 
 script:
   - bazel test --config=travis ...

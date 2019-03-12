@@ -19,9 +19,8 @@ addons:
       - bazel
 
 install:
-  - pyenv install --list
-  # - pyenv install 2.7.15
-  # - pyenv install 3.6.8
+  - pyenv install 2.7.14
+  - pyenv install 3.6.3
 
 script:
   - bazel test --config=travis ...

@@ -2,6 +2,6 @@ run --python_top=//runtime:dynamic
 test --python_top=//runtime:dynamic --build_tests_only
 
 # Control progress output when invoked by Travis
-build:travis --noshow_progress --show_task_finish --action_env=PATH --action_env=PYENV_VERSION=3.6.8:2.7.15 --nodistinct_host_configuration
+build:travis --noshow_progress --show_task_finish --action_env=PATH --action_env=PYENV_VERSION=3.6.3:2.7.14 --nodistinct_host_configuration
 
 try-import %workspace%/user.bazelrc

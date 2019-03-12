@@ -1,5 +1,7 @@
 # Bazel rules for pip requirements
 
+[![Build Status](https://travis-ci.org/apt-itude/rules_pip.svg?branch=master)](https://travis-ci.org/apt-itude/rules_pip)
+
 ## Overview
 This repository provides rules for the [Bazel build tool](https://www.bazel.build/) that allow your Python code to depend on pip packages using a standard [requirements file](https://pip.pypa.io/en/stable/user_guide/#requirements-files). It is built in pure Python and uses the `pip` and `wheel` libraries to ensure that the resulting dependency set is the same as it would be by using those tools.
 

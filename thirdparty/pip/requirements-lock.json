@@ -1,0 +1,13 @@
+{
+    "requirements": [
+        {
+            "name": "ansible"
+        },
+        {
+            "name": "lxml"
+        },
+        {
+            "name": "pyyaml"
+        }
+    ]
+}

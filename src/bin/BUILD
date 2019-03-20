@@ -26,3 +26,5 @@ py_binary(
     srcs = ["replace_shebang.py"],
     visibility = ["//:__subpackages__"],
 )
+
+exports_files(['generate_requirements_bzl.py'])

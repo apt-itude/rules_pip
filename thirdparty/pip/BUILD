@@ -1,1 +1,4 @@
-exports_files(["requirements.in"])
+exports_files([
+    "requirements-lock.json",
+    "requirements.in",
+])

@@ -61,3 +61,12 @@ pip_repository(
         "//thirdparty/pip/3:requirements-osx.txt": "osx",
     },
 )
+
+# New stuff
+
+load("//rules:new_repository.bzl", "pip_repositories")
+
+pip_repositories(
+    name = "pip",
+    requirements = "//thirdparty/pip:requirements-lock.json"
+)

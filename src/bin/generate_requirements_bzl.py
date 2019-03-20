@@ -63,11 +63,9 @@ class BzlFileGenerator(object):
                 yield rule
 
     def _generate_pip_repo_rules_for_requirement(self, requirement):
+        name = "pip__{}".format(requirement["name"])
         for source in requirement["sources"]:
-            yield self._generate_pip_repo_rule_for_requirement(
-                requirement["name"],
-                source,
-            )
+            yield self._generate_pip_repo_rule_for_requirement(name, source)
 
     def _generate_pip_repo_rule_for_requirement(self, name, source):
         return textwrap.dedent("""

@@ -13,15 +13,35 @@ def _pip_repositories_impl(repo_ctx):
     if result.return_code:
         fail(result.stderr)
 
+    repo_ctx.file(repo_ctx.path("BUILD"))
+
 
 pip_repositories = repository_rule(
     implementation = _pip_repositories_impl,
     attrs = {
-        "requirements": attr.label(allow_single_file=True),
+        "requirements": attr.label(allow_single_file = True),
         "_generate_requirements_bzl": attr.label(
             default = "//src/bin:generate_requirements_bzl.py",
             executable = True,
             cfg = "host",
         ),
+    }
+)
+
+
+def _pip_repository_impl(repo_ctx):
+    repo_ctx.download_and_extract(
+        url = repo_ctx.attr.url,
+        sha256 = repo_ctx.attr.sha256,
+        type = "zip" if repo_ctx.attr.is_wheel else "tar.gz"
+    )
+
+
+pip_repository = repository_rule(
+    implementation = _pip_repository_impl,
+    attrs = {
+        "url": attr.string(mandatory = True),
+        "sha256": attr.string(),
+        "is_wheel": attr.bool(),
     }
 )

@@ -70,3 +70,7 @@ pip_repositories(
     name = "pip",
     requirements = "//thirdparty/pip:requirements-lock.json"
 )
+
+load("@pip//:requirements.bzl", "pip_install")
+
+pip_install()

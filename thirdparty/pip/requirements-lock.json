@@ -1,13 +1,22 @@
 {
     "requirements": [
         {
-            "name": "ansible"
+            "name": "attrs",
+            "sources": [
+                {
+                    "url": "https://files.pythonhosted.org/packages/3a/e1/5f9023cc983f1a628a8c2fd051ad19e76ff7b142a0faf329336f9a62a514/attrs-18.2.0-py2.py3-none-any.whl",
+                    "is-wheel": true
+                }
+            ]
         },
         {
-            "name": "lxml"
-        },
-        {
-            "name": "pyyaml"
+            "name": "pyyaml",
+            "sources": [
+                {
+                    "url": "https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz",
+                    "is-wheel": false
+                }
+            ]
         }
     ]
 }

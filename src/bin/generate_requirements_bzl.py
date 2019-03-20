@@ -73,11 +73,13 @@ class BzlFileGenerator(object):
                 pip_repository(
                     name = "{name}",
                     url = "{url}",
+                    sha256 = "{sha256}",
                     is_wheel = {is_wheel},
                 )
         """).strip().format(
             name=name,
             url=source["url"],
+            sha256=source["sha256"],
             is_wheel=source["is-wheel"],
         )
 

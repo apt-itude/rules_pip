@@ -1,3 +1,23 @@
+_WHEEL_BUILD_FILE_CONTENT = """
+py_library(
+    name = "lib",
+    srcs = glob(["**/*.py"]),
+    data = glob(
+        ["**/*"],
+        exclude = [
+            "**/*.py",
+            "**/* *",  # Bazel runfiles cannot have spaces in the name
+            "BUILD",
+            "WORKSPACE",
+            "*.whl.zip",
+        ],
+    ),
+    imports = ["."],
+    visibility = ["//visibility:public"],
+)
+"""
+
+
 def _pip_repositories_impl(repo_ctx):
     output_path = repo_ctx.path("requirements.bzl")
 
@@ -35,6 +55,13 @@ def _pip_repository_impl(repo_ctx):
         sha256 = repo_ctx.attr.sha256,
         type = "zip" if repo_ctx.attr.is_wheel else "tar.gz"
     )
+
+    if repo_ctx.attr.is_wheel:
+        _generate_wheel_build_file(repo_ctx)
+
+
+def _generate_wheel_build_file(repo_ctx):
+    repo_ctx.file(repo_ctx.path("BUILD"), content = _WHEEL_BUILD_FILE_CONTENT)
 
 
 pip_repository = repository_rule(

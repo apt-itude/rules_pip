@@ -11,6 +11,23 @@
             ]
         },
         {
+            "name": "lxml",
+            "sources": [
+                {
+                    "url": "https://files.pythonhosted.org/packages/df/31/3e2754bc977738bf7ee1303b99f07599b455cd4a7f16f5be63704c446303/lxml-4.2.5-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl",
+                    "is-wheel": true,
+                    "python": 2,
+                    "platform": "osx"
+                },
+                {
+                    "url": "https://files.pythonhosted.org/packages/da/9c/901d13b9d84262082e81d38879600dcec28beb994ae08d1a7cbab4dc3ece/lxml-4.2.5-cp37-cp37m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl",
+                    "is-wheel": true,
+                    "python": 3,
+                    "platform": "osx"
+                }
+            ]
+        },
+        {
             "name": "pyyaml",
             "sources": [
                 {

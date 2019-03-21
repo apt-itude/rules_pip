@@ -63,8 +63,8 @@ class BzlFileGenerator(object):
                 yield rule
 
     def _generate_pip_repo_rules_for_requirement(self, requirement):
-        name = "pip__{}".format(requirement["name"])
         for source in requirement["sources"]:
+            name = generate_repo_name(requirement["name"], source)
             yield self._generate_pip_repo_rule_for_requirement(name, source)
 
     def _generate_pip_repo_rule_for_requirement(self, name, source):
@@ -79,8 +79,8 @@ class BzlFileGenerator(object):
         """).strip().format(
             name=name,
             url=source["url"],
-            sha256=source["sha256"],
-            is_wheel=source["is-wheel"],
+            sha256=source.get("sha256", ""),
+            is_wheel=source.get("is-wheel", False),
         )
 
 
@@ -91,6 +91,18 @@ def indent_block(string, level):
 
 def indent_line(line, level):
     return "{}{}".format((level * 4 * " "), line)
+
+
+def generate_repo_name(distro_name, source):
+    name = "pip__{}".format(distro_name)
+
+    if "python" in source:
+        name += "_py{}".format(source["python"])
+
+    if "platform" in source:
+        name += "_{}".format(source["platform"])
+
+    return name
 
 
 def write_bzl_file(path, contents):

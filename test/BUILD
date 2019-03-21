@@ -122,16 +122,16 @@ alias(
 alias(
     name = "lxml__py2",
     actual = select({
-        "//:linux": "@pip__lxml_py2_linux//:lib",
-        "//:osx": "@pip__lxml_py2_osx//:lib",
+        "//platforms:linux": "@pip__lxml_py2_linux//:lib",
+        "//platforms:osx": "@pip__lxml_py2_osx//:lib",
     }),
 )
 
 alias(
     name = "lxml__py3",
     actual = select({
-        "//:linux": "@pip__lxml_py3_linux//:lib",
-        "//:osx": "@pip__lxml_py3_osx//:lib",
+        "//platforms:linux": "@pip__lxml_py3_linux//:lib",
+        "//platforms:osx": "@pip__lxml_py3_osx//:lib",
     }),
 )
 

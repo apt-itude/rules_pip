@@ -6,8 +6,8 @@ compile_pip_requirements(
     python_interpreter = PYTHON3,
     requirements_in = "//thirdparty/pip:requirements.in",
     requirements_txt = select({
-        "//:linux": "requirements-linux.txt",
-        "//:osx": "requirements-osx.txt",
+        "//platforms:linux": "requirements-linux.txt",
+        "//platforms:osx": "requirements-osx.txt",
     }),
 )
 

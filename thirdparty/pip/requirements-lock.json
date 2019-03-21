@@ -1,4 +1,12 @@
 {
+    "python-versions": [
+        2,
+        3
+    ],
+    "platforms": [
+        "osx",
+        "linux"
+    ],
     "requirements": [
         {
             "name": "attrs",

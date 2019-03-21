@@ -111,35 +111,11 @@ pytest_test(
     python_version = 3,
 )
 
-alias(
-    name = "lxml",
-    actual = select({
-        "@bazel_tools//tools/python:PY2": ":lxml__py2",
-        "@bazel_tools//tools/python:PY3": ":lxml__py3",
-    }),
-)
-
-alias(
-    name = "lxml__py2",
-    actual = select({
-        "//platforms:linux": "@pip__lxml_py2_linux//:lib",
-        "//platforms:osx": "@pip__lxml_py2_osx//:lib",
-    }),
-)
-
-alias(
-    name = "lxml__py3",
-    actual = select({
-        "//platforms:linux": "@pip__lxml_py3_linux//:lib",
-        "//platforms:osx": "@pip__lxml_py3_osx//:lib",
-    }),
-)
-
 py_test(
     name = "multi_platform_multi_python_dep_test_py2",
     srcs = ["multi_platform_multi_python_dep_test.py"],
     main = "multi_platform_multi_python_dep_test.py",
-    deps = [":lxml"],
+    deps = ["@pip//:lxml"],
     python_version = "PY2",
 )
 
@@ -147,6 +123,6 @@ py_test(
     name = "multi_platform_multi_python_dep_test_py3",
     srcs = ["multi_platform_multi_python_dep_test.py"],
     main = "multi_platform_multi_python_dep_test.py",
-    deps = [":lxml"],
+    deps = ["@pip//:lxml"],
     python_version = "PY3",
 )

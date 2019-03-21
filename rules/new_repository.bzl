@@ -19,21 +19,18 @@ py_library(
 
 
 def _pip_repositories_impl(repo_ctx):
-    output_path = repo_ctx.path("requirements.bzl")
-
     # TODO can I get this programatically in case it's named differently?
     repo_name = "com_apt_itude_rules_pip"
 
     result = repo_ctx.execute([
         repo_ctx.path(repo_ctx.attr._generate_requirements_bzl),
         repo_ctx.path(repo_ctx.attr.requirements),
-        output_path,
+        repo_ctx.path("requirements.bzl"),
+        repo_ctx.path("BUILD"),
         repo_name,
     ])
     if result.return_code:
         fail(result.stderr)
-
-    repo_ctx.file(repo_ctx.path("BUILD"))
 
 
 pip_repositories = repository_rule(

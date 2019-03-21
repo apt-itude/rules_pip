@@ -24,6 +24,18 @@
                     "is-wheel": true,
                     "python": 3,
                     "platform": "osx"
+                },
+                {
+                    "url": "https://files.pythonhosted.org/packages/e5/14/f4343239f955442da9da1919a99f7311bc5627522741bada61b2349c8def/lxml-4.2.5-cp27-cp27mu-manylinux1_x86_64.whl",
+                    "is-wheel": true,
+                    "python": 2,
+                    "platform": "linux"
+                },
+                {
+                    "url": "https://files.pythonhosted.org/packages/03/a4/9eea8035fc7c7670e5eab97f34ff2ef0ddd78a491bf96df5accedb0e63f5/lxml-4.2.5-cp36-cp36m-manylinux1_x86_64.whl",
+                    "is-wheel": true,
+                    "python": 3,
+                    "platform": "linux"
                 }
             ]
         },

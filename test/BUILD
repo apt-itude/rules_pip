@@ -114,8 +114,24 @@ pytest_test(
 alias(
     name = "lxml",
     actual = select({
-        "@bazel_tools//tools/python:PY2": "@pip__lxml_py2_linux//:lib",
-        "@bazel_tools//tools/python:PY3": "@pip__lxml_py3_linux//:lib",
+        "@bazel_tools//tools/python:PY2": ":lxml__py2",
+        "@bazel_tools//tools/python:PY3": ":lxml__py3",
+    }),
+)
+
+alias(
+    name = "lxml__py2",
+    actual = select({
+        "//:linux": "@pip__lxml_py2_linux//:lib",
+        "//:osx": "@pip__lxml_py2_osx//:lib",
+    }),
+)
+
+alias(
+    name = "lxml__py3",
+    actual = select({
+        "//:linux": "@pip__lxml_py3_linux//:lib",
+        "//:osx": "@pip__lxml_py3_osx//:lib",
     }),
 )
 

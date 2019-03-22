@@ -42,11 +42,20 @@ class _PyDistPackageGenerator(object):
             for req in self.distribution.requires()
         )
 
+    @property
+    def console_entry_points(self):
+        return self.distribution.get_entry_map("console_scripts").keys()
+
     def generate(self):
         self._create_base_package_build_file()
 
         for data_directory in self._find_data_directories():
-            _DataPackageGenerator(self.base_package_path, data_directory).generate()
+            _DataPackageGenerator(self.base_package_path,
+                                  data_directory).generate()
+
+        entry_points = self.console_entry_points
+        if entry_points:
+            self._generate_bin_build_file()
 
     def _create_base_package_build_file(self):
         # Files with spaces in the name must be excluded
@@ -69,10 +78,61 @@ class _PyDistPackageGenerator(object):
             )
         """).lstrip().format(
             name=self.library_name,
-            deps=_create_string_list(dep.label for dep in self.library_dependencies),
+            deps=_create_string_list(
+                dep.label for dep in self.library_dependencies),
         )
 
         with open(self.base_package_build_file_path, mode="w") as build_file:
+            build_file.write(contents)
+
+    def _generate_bin_build_file(self):
+        contents = "".join([
+            textwrap.dedent("""
+            py_binary(
+                name = "{rule}",
+                srcs = ["bin/{entry_point}.py"],
+                deps = [":{library_name}"],
+                visibility = ["//visibility:public"],
+            )
+            """).lstrip().format(
+                rule="bin-" + ep if ep == self.library_name else ep,
+                entry_point=ep,
+                package_name=self.base_package_name,
+                library_name=self.library_name,
+            ) for ep in self.console_entry_points
+        ])
+
+        # Create bin directory
+        dirname = os.path.join(self.base_package_path, "bin")
+        os.makedirs(dirname, exist_ok=True)
+
+        # Generate scripts
+        from setuptools.command.install_scripts import install_scripts
+        from setuptools.dist import Distribution
+        dist = Distribution({
+            "name": self.distribution.key,
+            "version": self.distribution.version,
+            "entry_points": {
+                'console_scripts': [
+                    str(val) for _, val in
+                    self.distribution.get_entry_map("console_scripts").items()
+                ]
+            }
+        })
+        dist.script_name = "setup.py"
+        cmd = install_scripts(dist)
+        cmd.install_dir = dirname
+        cmd.ensure_finalized()
+        cmd.run()
+
+        # Add .py suffix. Bazel py_binary rule requires it
+        for f in os.listdir(dirname):
+            if not f.endswith(".py"):
+                fullname = os.path.join(dirname, f)
+                os.rename(fullname, fullname + ".py")
+
+        # Generate build file
+        with open(self.base_package_build_file_path, mode="a") as build_file:
             build_file.write(contents)
 
     def _find_data_directories(self):

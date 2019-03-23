@@ -27,4 +27,13 @@ py_binary(
     visibility = ["//:__subpackages__"],
 )
 
+py_binary(
+    name = "lock_pip_requirements",
+    srcs =["lock_pip_requirements.py"],
+    deps = [
+        "@pip_pip//:lib",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 exports_files(['generate_requirements_bzl.py'])

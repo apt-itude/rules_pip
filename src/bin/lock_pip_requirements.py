@@ -5,6 +5,8 @@ import tempfile
 
 import pip._internal
 
+from piprules import lockfile
+
 
 def main():
     args = parse_args()
@@ -27,7 +29,8 @@ def main():
 
     print(repr(requirement_set))
 
-    locked = {}
+    lock_file = lockfile.LockFile()
+    locked_requirements = lock_file.requirements
 
     with pip._internal.req.req_tracker.RequirementTracker() as requirement_tracker:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -69,20 +72,19 @@ def main():
                 dist = abstract_dist.dist()
                 print('\n')
 
-                locked_entry = locked.setdefault(dist.project_name, {})
-                locked_entry["version"] = dist.version
-                locked_entry["is-direct"] = requirement.is_direct
+                locked_requirement = lock_file.get_requirement(dist.project_name)
+                locked_requirement.version = dist.version
+                locked_requirement.is_direct = requirement.is_direct
 
-                deps = locked_entry.setdefault("dependencies", {})
                 for dep in dist.requires():
-                    deps.setdefault(dep.name, {})
+                    locked_dep = locked_requirement.get_dependency(dep.name)
 
-                sources = locked_entry.setdefault("sources", {})
                 link = requirement.link
-                source = sources.setdefault(link.url_without_fragment, {})
-                source[link.hash_name] = link.hash
+                source = locked_requirement.get_source(link.url_without_fragment)
+                # TODO this assumes the hash is sha256
+                source.sha256 = link.hash
 
-    print(json.dumps(locked, indent=2))
+    print(lock_file.to_json())
 
 
 def parse_args():

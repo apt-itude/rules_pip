@@ -5,6 +5,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "@pip_pip//:lib",
+        "@pip_schematics//:lib",
         "@pip_setuptools//:lib",
         "@pip_wheel//:lib",
     ],

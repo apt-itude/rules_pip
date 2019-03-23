@@ -31,6 +31,7 @@ py_binary(
     name = "lock_pip_requirements",
     srcs =["lock_pip_requirements.py"],
     deps = [
+        "//src/piprules",
         "@pip_pip//:lib",
     ],
     visibility = ["//visibility:public"],

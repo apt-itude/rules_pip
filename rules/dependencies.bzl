@@ -57,6 +57,12 @@ def pip_rules_dependencies():
         sha256 = "832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb",
     )
 
+    _remote_wheel(
+        name = "schematics",
+        url = "https://files.pythonhosted.org/packages/97/2f/2c5f0dc4dab5e5ca54e4d783f7f618bfc65d8788771876713d42eb8515aa/schematics-2.1.0-py2.py3-none-any.whl",
+        sha256 = "8fcc6182606fd0b24410a1dbb066d9bbddbe8da9c9509f47b743495706239283",
+    )
+
     _ensure_rule_exists(
         git_repository,
         name = "bazel_skylib",

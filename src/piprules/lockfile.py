@@ -17,7 +17,12 @@ class Dependency(schematics.models.Model):
 
 class Source(schematics.models.Model):
 
-    sha256 = schematics.types.StringType(required=True)
+    is_local = schematics.types.BooleanType(
+        default=False,
+        serialized_name="is-local",
+        deserialize_from=["is-local"],
+    )
+    sha256 = schematics.types.StringType(serialize_when_none=False)
 
 
 class Requirement(schematics.models.Model):

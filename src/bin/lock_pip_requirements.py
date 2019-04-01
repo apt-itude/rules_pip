@@ -26,16 +26,6 @@ def main():
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-p", "--python-version",
-        type=int,
-        choices=[2, 3],
-        action="append",
-    )
-    parser.add_argument(
-        "-P", "--platform",
-        action="append",
-    )
-    parser.add_argument(
         "-l", "--lock-file",
     )
     parser.add_argument(

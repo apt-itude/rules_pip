@@ -2,7 +2,7 @@ import argparse
 import json
 import logging
 
-from piprules import lock, lockfile, pipcompat, resolve
+from piprules import lockfile, pipcompat, resolve, update
 
 
 def main():
@@ -14,11 +14,11 @@ def main():
 
     lock_file = lockfile.LockFile()
 
-    locker = lock.Locker(session, lock_file, args.requirements_files)
+    updater = update.Updater(session, lock_file, args.requirements_files)
 
     resolver_factory = resolve.ResolverFactory([args.index_url], args.wheel_dir)
     with resolver_factory.make_resolver(session) as resolver:
-        locker.lock(resolver)
+        updater.update(resolver)
 
     print(lock_file.to_json())
 

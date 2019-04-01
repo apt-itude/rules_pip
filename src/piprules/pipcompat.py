@@ -18,3 +18,7 @@ from pip._vendor.packaging.utils import canonicalize_name
 
 
 LOG = logging.getLogger("pip")
+
+
+def create_requirement_from_string(string, comes_from=None):
+    return InstallRequirement(Requirement(string), comes_from)

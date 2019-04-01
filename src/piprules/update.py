@@ -6,14 +6,14 @@ from piprules import pipcompat
 LOG = logging.getLogger(__name__)
 
 
-class Locker(object):
+class Updater(object):
 
     def __init__(self, session, lock_file, requirements_files=None):
         self._session = session
         self._lock_file = lock_file
         self._requirements_files = requirements_files or []
 
-    def lock(self, resolver):
+    def update(self, resolver):
         requirement_set = self._build_requirement_set()
 
         resolver.resolve(requirement_set)
@@ -36,7 +36,7 @@ class Locker(object):
     def _generate_locked_requirements(self):
         for name, details in self._lock_file.requirements:
             constraint = "{}=={}".format(name, details.version)
-            yield _create_requirement_from_string(constraint)
+            yield pipcompat.create_requirement_from_string(constraint)
 
     def _generate_direct_requirements(self):
         for path in self._requirements_files:
@@ -69,8 +69,3 @@ class Locker(object):
             if link.hash:
                 # TODO this assumes the hash is sha256
                 source.sha256 = link.hash
-
-
-def _create_requirement_from_string(string, comes_from=None):
-    requirement = pipcompat.Requirement(string)
-    return pipcompat.InstallRequirement(requirement, comes_from)

@@ -2,6 +2,7 @@ import contextlib
 import logging
 import os
 import shutil
+import sys
 import tempfile
 
 from piprules import lockfile, pipcompat, util
@@ -161,6 +162,9 @@ class Resolver(object):
         link = requirement.link
         source = locked_requirement.get_source(link.url_without_fragment)
         source.is_local = use_local_wheel_source
+
+        if sys.version_info.major not in source.python_versions:
+            source.python_versions.append(sys.version_info.major)
 
         if link.hash:
             # TODO this assumes the hash is sha256

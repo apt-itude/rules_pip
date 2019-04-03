@@ -26,6 +26,11 @@ class Source(schematics.models.Model):
         deserialize_from=["is-local"],
     )
     sha256 = schematics.types.StringType(serialize_when_none=False)
+    python_versions = schematics.types.ListType(
+        schematics.types.IntType,
+        default=[],
+        max_size=2,
+    )
 
     def update(self, new_source):
         if new_source.is_local != self.is_local:

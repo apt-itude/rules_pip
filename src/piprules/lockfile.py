@@ -93,9 +93,9 @@ class LockFile(schematics.models.Model):
         LOG.debug('Reading requirements lock file %s', path)
 
         with open(path) as lock_file:
-            data = json.load(lock_file)
+            json_string = lock_file.read()
 
-        return cls(data)
+        return cls.from_json(json_string)
 
     @classmethod
     def from_json(cls, json_string):
@@ -106,11 +106,13 @@ class LockFile(schematics.models.Model):
 
         util.ensure_directory_exists(os.path.dirname(path))
 
+        json_string = self.to_json()
+
         with open(path, mode='w') as lock_file:
-            json.dump(self.to_primitive(), lock_file, indent=2)
+            lock_file.write(json_string)
 
     def to_json(self):
-        return json.dumps(self.to_primitive(), indent=2)
+        return json.dumps(self.to_primitive(), indent=2, sort_keys=True)
 
     def get_requirement(self, name):
         return self.requirements.setdefault(name, Requirement())

@@ -12,7 +12,7 @@ def main():
 
     session = pipcompat.PipSession()
 
-    lock_file = lockfile.LockFile()
+    lock_file = lockfile.load(args.lock_file or '')
 
     updater = update.Updater(session, lock_file, args.requirements_files)
 
@@ -20,7 +20,10 @@ def main():
     with resolver_factory.make_resolver(session) as resolver:
         updater.update(resolver)
 
-    print(lock_file.to_json())
+    if args.lock_file:
+        lock_file.dump(args.lock_file)
+    else:
+        print(lock_file.to_json())
 
 
 def parse_args():

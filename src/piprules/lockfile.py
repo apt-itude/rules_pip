@@ -1,3 +1,4 @@
+import errno
 import json
 import logging
 import os
@@ -82,3 +83,12 @@ class LockFile(schematics.models.Model):
 
     def get_requirement(self, name):
         return self.requirements.setdefault(name, Requirement())
+
+
+def load(path, create_if_missing=True):
+    try:
+        return LockFile.load(path)
+    except OSError as err:
+        if create_if_missing and err.errno == errno.ENOENT:
+            return LockFile()
+        raise err

@@ -13,7 +13,9 @@ LOG = logging.getLogger(__name__)
 
 class Dependency(schematics.models.Model):
 
-    pass
+    def update(self, new_dependency):
+        # TODO
+        pass
 
 
 class Source(schematics.models.Model):
@@ -24,6 +26,16 @@ class Source(schematics.models.Model):
         deserialize_from=["is-local"],
     )
     sha256 = schematics.types.StringType(serialize_when_none=False)
+
+    def update(self, new_source):
+        if new_source.is_local != self.is_local:
+            # TODO raise better error
+            raise RuntimeError(
+                "A source cannot change from remote to local or vice-versa"
+            )
+
+        # TODO warn about hash changing?
+        self.sha256 = new_source.sha256
 
 
 class Requirement(schematics.models.Model):
@@ -48,6 +60,25 @@ class Requirement(schematics.models.Model):
 
     def get_source(self, url):
         return self.sources.setdefault(url, Source())
+
+    def update(self, new_requirement):
+        version_is_changing = new_requirement.version != self.version
+
+        self.version = new_requirement.version
+        self.is_direct = new_requirement.is_direct
+
+        if version_is_changing:
+            self.dependencies = new_requirement.dependencies
+            self.sources = new_requirement.sources
+        else:
+            _update_dict_type_recursively(
+                self.dependencies,
+                new_requirement.dependencies,
+            )
+            _update_dict_type_recursively(
+                self.sources,
+                new_requirement.sources,
+            )
 
 
 class LockFile(schematics.models.Model):
@@ -83,6 +114,19 @@ class LockFile(schematics.models.Model):
 
     def get_requirement(self, name):
         return self.requirements.setdefault(name, Requirement())
+
+    def update(self, new_requirements):
+        _update_dict_type_recursively(self.requirements, new_requirements)
+
+
+def _update_dict_type_recursively(existing, new):
+    for key, new_value in new.items():
+        try:
+            existing_value = existing[key]
+        except KeyError:
+            existing[key] = new_value
+        else:
+            existing_value.update(new_value)
 
 
 def load(path, create_if_missing=True):

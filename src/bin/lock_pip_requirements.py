@@ -2,7 +2,7 @@ import argparse
 import json
 import logging
 
-from piprules import lockfile, pipcompat, requirements, resolve, update
+from piprules import lockfile, pipcompat, requirements, resolve
 
 
 LOG = logging.getLogger()
@@ -27,8 +27,9 @@ def main():
 
     resolver_factory = resolve.ResolverFactory([args.index_url], args.wheel_dir)
     with resolver_factory.make_resolver(pip_session) as resolver:
-        resolver.resolve(requirement_set)
-        update.update_lock_file(lock_file, requirement_set.requirements.values())
+        locked_requirements = resolver.resolve(requirement_set)
+
+    lock_file.update(locked_requirements)
 
     if args.lock_file_path:
         lock_file.dump(args.lock_file_path)

@@ -4,7 +4,7 @@ import os
 import shutil
 import tempfile
 
-from piprules import pipcompat, util
+from piprules import lockfile, pipcompat, util
 
 
 LOG = logging.getLogger(__name__)
@@ -108,38 +108,76 @@ class Resolver(object):
     def resolve(self, requirement_set):
         self._pip_resolver.resolve(requirement_set)
 
+        requirements = requirement_set.requirements.values()
+
+        self._build_wheels_if_necessary(requirements)
+
+        return {
+            name: locked_requirement
+            for name, locked_requirement
+            in self._generate_locked_requirements(requirements)
+        }
+
+    def _build_wheels_if_necessary(self, requirements):
         build_failures = self._wheel_builder.build(
-            requirement_set.requirements.values(),
+            requirements,
             session=self._session,
         )
         if build_failures:
-            # TODO better error
+            # TODO raise better error
             raise RuntimeError('Failed to build one or more wheels')
 
-        for requirement in requirement_set.requirements.values():
-            if not requirement.link.is_wheel:
-                temp_wheel_path = _find_wheel(self._temp_dirs.wheel, requirement.name)
-                wheel_path = _copy_file(temp_wheel_path, self._wheel_dir)
-                url = pipcompat.path_to_url(wheel_path)
+    def _generate_locked_requirements(self, requirements):
+        for requirement in requirements:
+            name = pipcompat.canonicalize_name(requirement.name)
+            locked_requirement = self._create_locked_requirement(requirement)
+            yield name, locked_requirement
 
-                LOG.debug("Setting source of {} to {}".format(
-                    requirement.name,
-                    url,
-                ))
-                requirement.link = pipcompat.Link(url, comes_from="local")
+    def _create_locked_requirement(self, requirement):
+        use_local_wheel_source = not requirement.link.is_wheel
 
-                # This is necessary for the make_abstract_dist step when updating the
-                # lock file
-                requirement.ensure_has_source_dir(self._temp_dirs.build)
-                pipcompat.unpack_url(
-                    requirement.link,
-                    requirement.source_dir,
-                    None,
-                    False,
-                    session=self._session,
-                )
+        if use_local_wheel_source:
+            self._set_link_to_local_wheel(requirement)
 
-        return requirement_set
+        abstract_dist = pipcompat.make_abstract_dist(requirement)
+        dist = abstract_dist.dist()
+
+        locked_requirement = lockfile.Requirement()
+        locked_requirement.version = dist.version
+        locked_requirement.is_direct = requirement.is_direct
+
+        for dep in dist.requires():
+            canon_dep_name = pipcompat.canonicalize_name(dep.name)
+            locked_dep = locked_requirement.get_dependency(canon_dep_name)
+
+        link = requirement.link
+        source = locked_requirement.get_source(link.url_without_fragment)
+        source.is_local = use_local_wheel_source
+
+        if link.hash:
+            # TODO this assumes the hash is sha256
+            source.sha256 = link.hash
+
+        return locked_requirement
+
+    def _set_link_to_local_wheel(self, requirement):
+        temp_wheel_path = _find_wheel(self._temp_dirs.wheel, requirement.name)
+        wheel_path = _copy_file(temp_wheel_path, self._wheel_dir)
+        url = pipcompat.path_to_url(wheel_path)
+
+        LOG.debug("Setting source of %s to %s", requirement.name, url)
+        requirement.link = pipcompat.Link(url, comes_from=wheel_path)
+
+        # This is necessary for the make_abstract_dist step, which relies on an
+        # unpacked wheel that looks like an installed distribution
+        requirement.ensure_has_source_dir(self._temp_dirs.build)
+        pipcompat.unpack_url(
+            requirement.link,
+            requirement.source_dir,
+            None,
+            False,
+            session=self._session,
+        )
 
 
 def _find_wheel(directory, name):
@@ -154,6 +192,7 @@ def _find_wheel(directory, name):
             if pipcompat.canonicalize_name(wheel.name) == canon_name:
                 return path
 
+    # TODO raise better error
     raise RuntimeError('Could not find wheel matching name "{}"'.format(name))
 
 

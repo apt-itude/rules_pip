@@ -1,5 +1,6 @@
 import errno
 import contextlib
+import itertools
 import os
 
 
@@ -36,3 +37,8 @@ def prepend_to_pythonpath(paths):
             del os.environ["PYTHONPATH"]
         else:
             os.environ["PYTHONPATH"] = original_pythonpath
+
+
+def full_groupby(iterable, key=None):
+    """Like itertools.groupby(), but sorts the input on the group key first."""
+    return itertools.groupby(sorted(iterable, key=key), key=key)

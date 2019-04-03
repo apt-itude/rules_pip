@@ -4,7 +4,7 @@ import os
 import shutil
 import tempfile
 
-from piprules import pipcompat, util
+from piprules import condense, pipcompat, util
 
 
 LOG = logging.getLogger(__name__)
@@ -105,7 +105,9 @@ class Resolver(object):
         self._temp_dirs = temp_dirs
         self._wheel_dir = wheel_dir
 
-    def resolve(self, requirement_set):
+    def resolve(self, requirements):
+        requirement_set = condense.condense_requirements(requirements)
+
         self._pip_resolver.resolve(requirement_set)
 
         build_failures = self._wheel_builder.build(
@@ -139,6 +141,8 @@ class Resolver(object):
                     session=self._session,
                 )
 
+        return requirement_set
+
 
 def _find_wheel(directory, name):
     canon_name = pipcompat.canonicalize_name(name)
@@ -149,7 +153,7 @@ def _find_wheel(directory, name):
                 wheel = pipcompat.Wheel(filename)
             except pipcompat.InvalidWheelFilename:
                 continue
-            if pipcompat.canonicalize_name(wheel.name) == name:
+            if pipcompat.canonicalize_name(wheel.name) == canon_name:
                 return path
 
     raise RuntimeError('Could not find wheel matching name "{}"'.format(name))

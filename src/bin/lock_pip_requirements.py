@@ -5,6 +5,9 @@ import logging
 from piprules import lockfile, pipcompat, resolve, update
 
 
+LOG = logging.getLogger()
+
+
 def main():
     args = parse_args()
     logging.basicConfig(level=logging.DEBUG)
@@ -12,16 +15,16 @@ def main():
 
     session = pipcompat.PipSession()
 
-    lock_file = lockfile.load(args.lock_file or '')
+    lock_file = lockfile.load(args.lock_file_path or '')
 
     updater = update.Updater(session, lock_file, args.requirements_files)
 
     resolver_factory = resolve.ResolverFactory([args.index_url], args.wheel_dir)
     with resolver_factory.make_resolver(session) as resolver:
-        updater.update(resolver)
+        updater.update(resolver, args.update_all, args.update_packages)
 
-    if args.lock_file:
-        lock_file.dump(args.lock_file)
+    if args.lock_file_path:
+        lock_file.dump(args.lock_file_path)
     else:
         print(lock_file.to_json())
 
@@ -30,6 +33,17 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-l", "--lock-file",
+        dest="lock_file_path",
+    )
+    parser.add_argument(
+        "-U", "--update",
+        action="store_true",
+        dest="update_all",
+    )
+    parser.add_argument(
+        "-P", "--update-package",
+        action="append",
+        dest="update_packages",
     )
     parser.add_argument(
         "-i", "--index-url",

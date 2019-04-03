@@ -13,30 +13,38 @@ class Updater(object):
         self._lock_file = lock_file
         self._requirements_files = requirements_files or []
 
-    def update(self, resolver):
-        requirement_set = self._build_requirement_set()
+    def update(self, resolver, all_=False, packages=None):
+        if packages is None:
+            packages = []
 
-        resolver.resolve(requirement_set)
+        requirements = list(self._generate_requirements(all_, packages))
+
+        requirement_set = resolver.resolve(requirements)
+
         self._update_lock_file(requirement_set)
 
         return self._lock_file
 
-    def _build_requirement_set(self):
-        requirement_set = pipcompat.RequirementSet()
+    def _generate_requirements(self, update_all, update_packages):
+        if not update_all:
+            for requirement in self._generate_locked_requirements(update_packages):
+                yield requirement
 
-        for install_requirement in self._generate_locked_requirements():
-            requirement_set.add_requirement(install_requirement)
+        for requirement in self._generate_direct_requirements():
+            yield requirement
 
-        for install_requirement in self._generate_direct_requirements():
-            install_requirement.is_direct = True
-            requirement_set.add_requirement(install_requirement)
-
-        return requirement_set
-
-    def _generate_locked_requirements(self):
-        for name, details in self._lock_file.requirements:
-            constraint = "{}=={}".format(name, details.version)
-            yield pipcompat.create_requirement_from_string(constraint)
+    def _generate_locked_requirements(self, update_packages):
+        update_packages_canon_names = {
+            pipcompat.canonicalize_name(name) for name in update_packages
+        }
+        for name, details in self._lock_file.requirements.items():
+            canon_name = pipcompat.canonicalize_name(name)
+            if canon_name not in update_packages_canon_names:
+                yield _create_locked_requirement(
+                    name,
+                    details.version,
+                    details.is_direct,
+                )
 
     def _generate_direct_requirements(self):
         for path in self._requirements_files:
@@ -69,3 +77,10 @@ class Updater(object):
             if link.hash:
                 # TODO this assumes the hash is sha256
                 source.sha256 = link.hash
+
+
+def _create_locked_requirement(name, version, is_direct):
+    constraint = "{}=={}".format(name, version)
+    requirement = pipcompat.create_requirement_from_string(constraint)
+    requirement.is_direct = is_direct
+    return requirement

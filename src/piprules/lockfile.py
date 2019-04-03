@@ -139,7 +139,7 @@ def _update_dict_type_recursively(existing, new):
 def load(path, create_if_missing=True):
     try:
         return LockFile.load(path)
-    except OSError as err:
+    except IOError as err:
         if create_if_missing and err.errno == errno.ENOENT:
             return LockFile()
         raise err

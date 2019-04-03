@@ -1,5 +1,4 @@
 import argparse
-import json
 import logging
 
 from piprules import lockfile, pipcompat, requirements, resolve

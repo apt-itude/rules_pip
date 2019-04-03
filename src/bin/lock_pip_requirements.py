@@ -2,7 +2,7 @@ import argparse
 import json
 import logging
 
-from piprules import lockfile, pipcompat, resolve, update
+from piprules import lockfile, pipcompat, requirements, resolve, update
 
 
 LOG = logging.getLogger()
@@ -13,15 +13,22 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     pipcompat.LOG.setLevel(logging.INFO)
 
-    session = pipcompat.PipSession()
+    pip_session = pipcompat.PipSession()
 
     lock_file = lockfile.load(args.lock_file_path or '')
 
-    updater = update.Updater(session, lock_file, args.requirements_files)
+    requirement_set = requirements.collect_and_condense(
+        pip_session,
+        lock_file,
+        args.requirements_files,
+        update_all=args.update_all,
+        packages_to_update=args.packages_to_update,
+    )
 
     resolver_factory = resolve.ResolverFactory([args.index_url], args.wheel_dir)
-    with resolver_factory.make_resolver(session) as resolver:
-        updater.update(resolver, args.update_all, args.update_packages)
+    with resolver_factory.make_resolver(pip_session) as resolver:
+        resolver.resolve(requirement_set)
+        update.update_lock_file(lock_file, requirement_set.requirements.values())
 
     if args.lock_file_path:
         lock_file.dump(args.lock_file_path)
@@ -43,7 +50,7 @@ def parse_args():
     parser.add_argument(
         "-P", "--update-package",
         action="append",
-        dest="update_packages",
+        dest="packages_to_update",
     )
     parser.add_argument(
         "-i", "--index-url",

@@ -4,7 +4,7 @@ import os
 import shutil
 import tempfile
 
-from piprules import condense, pipcompat, util
+from piprules import pipcompat, util
 
 
 LOG = logging.getLogger(__name__)
@@ -105,9 +105,7 @@ class Resolver(object):
         self._temp_dirs = temp_dirs
         self._wheel_dir = wheel_dir
 
-    def resolve(self, requirements):
-        requirement_set = condense.condense_requirements(requirements)
-
+    def resolve(self, requirement_set):
         self._pip_resolver.resolve(requirement_set)
 
         build_failures = self._wheel_builder.build(

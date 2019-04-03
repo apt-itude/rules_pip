@@ -10,34 +10,42 @@ from piprules import lockfile, pipcompat, util
 LOG = logging.getLogger(__name__)
 
 
+def resolve_requirement_set(requirement_set, pip_session, index_urls, wheel_dir):
+    resolver_factory = ResolverFactory(pip_session, index_urls, wheel_dir)
+
+    with resolver_factory.make_resolver() as resolver:
+        return resolver.resolve(requirement_set)
+
+
 class ResolverFactory(object):
 
-    def __init__(self, index_urls, wheel_dir):
+    def __init__(self, pip_session, index_urls, wheel_dir):
+        self.pip_session = pip_session
         self.index_urls = index_urls
         self.wheel_dir = wheel_dir
 
     @contextlib.contextmanager
-    def make_resolver(self, session):
+    def make_resolver(self):
         with pipcompat.RequirementTracker() as requirement_tracker:
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_dirs = _TempDirs(temp_dir)
-                finder = self._make_finder(session)
+                finder = self._make_finder()
                 preparer = self._make_preparer(requirement_tracker, temp_dirs)
-                pip_resolver = self._make_pip_resolver(preparer, finder, session)
+                pip_resolver = self._make_pip_resolver(finder, preparer)
                 wheel_builder = self._make_wheel_builder(finder, preparer)
                 yield Resolver(
-                    session,
+                    self.pip_session,
                     pip_resolver,
                     wheel_builder,
                     temp_dirs,
                     self.wheel_dir,
                 )
 
-    def _make_finder(self, session):
+    def _make_finder(self):
         return pipcompat.PackageFinder(
             find_links=[],
             index_urls=self.index_urls,
-            session=session,
+            session=self.pip_session,
             prefer_binary=True,
         )
 
@@ -52,11 +60,11 @@ class ResolverFactory(object):
             build_isolation=True,
         )
 
-    def _make_pip_resolver(self, preparer, finder, session):
+    def _make_pip_resolver(self, finder, preparer):
         return pipcompat.Resolver(
-            preparer=preparer,
             finder=finder,
-            session=session,
+            preparer=preparer,
+            session=self.pip_session,
             ignore_installed=True,
             wheel_cache=None,
             use_user_site=False,

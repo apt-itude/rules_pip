@@ -25,9 +25,12 @@ def main():
         packages_to_update=args.packages_to_update,
     )
 
-    resolver_factory = resolve.ResolverFactory([args.index_url], args.wheel_dir)
-    with resolver_factory.make_resolver(pip_session) as resolver:
-        locked_requirements = resolver.resolve(requirement_set)
+    locked_requirements = resolve.resolve_requirement_set(
+        requirement_set,
+        pip_session,
+        [args.index_url],
+        args.wheel_dir,
+    )
 
     lock_file.update(locked_requirements)
 

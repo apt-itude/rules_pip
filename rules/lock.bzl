@@ -16,23 +16,22 @@ def _pip_lock(ctx):
 
     req_files = " ".join([req_file.path for req_file in ctx.files.requirements])
 
-    static_args = " --lock-file {lock_file} --wheel-dir {wheel_dir} {req_files} $@".format(
-        lock_file = requirements_lock_path,
-        wheel_dir = wheel_dir,
-        req_files = req_files,
+    substitutions = {
+        "@@LOCK_PIP_REQUIREMENTS_PY2@@": ctx.executable._lock_pip_requirements_py2.short_path,
+        "@@LOCK_PIP_REQUIREMENTS_PY3@@": ctx.executable._lock_pip_requirements_py3.short_path,
+        "@@USE_PY2@@": "true" if "2" in ctx.attr.python_version else "false",
+        "@@USE_PY3@@": "true" if "3" in ctx.attr.python_version else "false",
+        "@@REQUIREMENTS_LOCK_PATH@@": requirements_lock_path,
+        "@@WHEEL_DIRECTORY@@": wheel_dir,
+        "@@REQUIREMENTS_TXT_PATHS@@": req_files,
+    }
+
+    ctx.actions.expand_template(
+        template = ctx.file._wrapper_template,
+        output = ctx.outputs.executable,
+        substitutions = substitutions,
+        is_executable = True,
     )
-
-    script_contents = "#!/bin/sh\n"
-
-    if ctx.attr.python_version in ["PY2", "PY2AND3"]:
-        executable_path = ctx.attr._lock_pip_requirements_py2.files_to_run.executable.short_path
-        script_contents += executable_path + static_args + "\n"
-
-    if ctx.attr.python_version in ["PY3", "PY2AND3"]:
-        executable_path = ctx.attr._lock_pip_requirements_py3.files_to_run.executable.short_path
-        script_contents += executable_path + static_args + "\n"
-
-    ctx.actions.write(ctx.outputs.executable, script_contents, is_executable=True)
 
     runfiles = ctx.runfiles(
         files = (
@@ -40,12 +39,9 @@ def _pip_lock(ctx):
             ctx.attr._lock_pip_requirements_py2.default_runfiles.files.to_list() +
             ctx.attr._lock_pip_requirements_py3.default_runfiles.files.to_list()
         ),
-        # collect_data = True,
-        # collect_default = True,
     )
 
     return [DefaultInfo(
-        # files = depset([out_file]),
         runfiles = runfiles,
         executable = ctx.outputs.executable,
     )]
@@ -70,6 +66,10 @@ pip_lock = rule(
             default = "//src/bin:lock_pip_requirements_py3",
             cfg = "target",
             executable = True,
+        ),
+        "_wrapper_template": attr.label(
+            default = "//src/templates:lock_pip_requirements_wrapper_template.sh",
+            allow_single_file = True,
         ),
     },
     executable = True,

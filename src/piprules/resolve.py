@@ -28,17 +28,17 @@ class ResolverFactory(object):
     @contextlib.contextmanager
     def make_resolver(self):
         with pipcompat.RequirementTracker() as requirement_tracker:
-            with tempfile.TemporaryDirectory() as temp_dir:
-                temp_dirs = _TempDirs(temp_dir)
+            with _WorkDirs(tempfile.mkdtemp()) as work_dirs:
                 finder = self._make_finder()
-                preparer = self._make_preparer(requirement_tracker, temp_dirs)
+                preparer = self._make_preparer(requirement_tracker, work_dirs)
                 pip_resolver = self._make_pip_resolver(finder, preparer)
                 wheel_builder = self._make_wheel_builder(finder, preparer)
+
                 yield Resolver(
                     self.pip_session,
                     pip_resolver,
                     wheel_builder,
-                    temp_dirs,
+                    work_dirs,
                     self.wheel_dir,
                 )
 
@@ -50,12 +50,12 @@ class ResolverFactory(object):
             prefer_binary=True,
         )
 
-    def _make_preparer(self, requirement_tracker, temp_dirs):
+    def _make_preparer(self, requirement_tracker, work_dirs):
         return pipcompat.RequirementPreparer(
-            build_dir=temp_dirs.build,
-            src_dir=temp_dirs.src,
+            build_dir=work_dirs.build,
+            src_dir=work_dirs.src,
             download_dir=None,
-            wheel_download_dir=temp_dirs.wheel,
+            wheel_download_dir=work_dirs.wheel,
             req_tracker=requirement_tracker,
             progress_bar="off",
             build_isolation=True,
@@ -87,31 +87,46 @@ class ResolverFactory(object):
         )
 
 
-class _TempDirs(object):
+class _WorkDirs(object):
 
-    def __init__(self, directory):
-        self.directory = directory
+    def __init__(self, base):
+        self.base = base
 
     @property
     def build(self):
-        return os.path.join(self.directory, "build")
+        return os.path.join(self.base, "build")
 
     @property
     def src(self):
-        return os.path.join(self.directory, "src")
+        return os.path.join(self.base, "src")
 
     @property
     def wheel(self):
-        return os.path.join(self.directory, "wheel")
+        return os.path.join(self.base, "wheel")
+
+    def __enter__(self):
+        self.create_all()
+        return self
+
+    def create_all(self):
+        util.ensure_directory_exists(self.build)
+        util.ensure_directory_exists(self.src)
+        util.ensure_directory_exists(self.wheel)
+
+    def __exit__(self, *args, **kwargs):
+        self.delete_all()
+
+    def delete_all(self):
+        shutil.rmtree(self.base)
 
 
 class Resolver(object):
 
-    def __init__(self, session, pip_resolver, wheel_builder, temp_dirs, wheel_dir):
+    def __init__(self, session, pip_resolver, wheel_builder, work_dirs, wheel_dir):
         self._session = session
         self._pip_resolver = pip_resolver
         self._wheel_builder = wheel_builder
-        self._temp_dirs = temp_dirs
+        self._work_dirs = work_dirs
         self._wheel_dir = wheel_dir
 
     def resolve(self, requirement_set):
@@ -173,7 +188,7 @@ class Resolver(object):
         return locked_requirement
 
     def _set_link_to_local_wheel(self, requirement):
-        temp_wheel_path = _find_wheel(self._temp_dirs.wheel, requirement.name)
+        temp_wheel_path = _find_wheel(self._work_dirs.wheel, requirement.name)
         wheel_path = _copy_file(temp_wheel_path, self._wheel_dir)
         url = pipcompat.path_to_url(wheel_path)
 
@@ -182,7 +197,7 @@ class Resolver(object):
 
         # This is necessary for the make_abstract_dist step, which relies on an
         # unpacked wheel that looks like an installed distribution
-        requirement.ensure_has_source_dir(self._temp_dirs.build)
+        requirement.ensure_has_source_dir(self._work_dirs.build)
         pipcompat.unpack_url(
             requirement.link,
             requirement.source_dir,

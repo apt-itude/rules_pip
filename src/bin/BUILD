@@ -6,6 +6,7 @@ par_binary(
     visibility = ["//visibility:public"],
     deps = [
         "@pip_click//:lib",
+        "@pip_pip//:lib",
         "@pip_pip_tools//:lib",
         "@pip_six//:lib",
     ],

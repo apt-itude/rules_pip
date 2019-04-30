@@ -117,43 +117,79 @@ class BuildFileGenerator(object):
         )
 
     def _generate_aliases(self):
-        return "\n".join(self._generate_all_aliases())
+        return "\n".join(self._generate_all_rules())
 
-    def _generate_all_aliases(self):
+    def _generate_all_rules(self):
         for name, requirement in self.requirements.items():
-            source_tree = self._build_source_tree(requirement["source"])
-            for alias in self._generate_aliases_for_requirement(name, source_tree):
-                yield str(alias)
+            environment_tree = self._build_environment_tree(requirement)
+            for rule in self._generate_rules_for_requirement(name, environment_tree):
+                yield rule
 
-    def _build_source_tree(self, source_map):
+    def _build_environment_tree(self, requirement):
+        source_map = requirement["source"]
+        dependencies_map = requirement["dependencies"]
+
         tree = {}
 
         for environment_name, environment in self.environments.items():
             python_version = environment["python_version"]
             sys_platform = environment["sys_platform"]
-            source = source_map[environment_name]
-            tree.setdefault(python_version, {})[sys_platform] = source
+
+            source_label = "@{}//:lib".format(source_map[environment_name])
+            environment_dependencies = (
+                [source_label] +
+                [str(dep) for dep in dependencies_map[environment_name]]
+            )
+
+            tree.setdefault(python_version, {})[sys_platform] = environment_dependencies
 
         return tree
 
-    def _generate_aliases_for_requirement(self, requirement_name, source_tree):
+    def _generate_rules_for_requirement(self, requirement_name, environment_tree):
         top_alias = SelectAlias(requirement_name)
 
-        for python_version, sys_platforms in source_tree.items():
+        for python_version, sys_platforms in environment_tree.items():
+            for sys_platform, dependencies in sys_platforms.items():
+                yield self._generate_py_library(
+                    requirement_name,
+                    python_version,
+                    sys_platform,
+                    dependencies,
+                )
+
             version_alias = self._generate_python_version_alias(
                 requirement_name,
                 python_version,
                 sys_platforms,
             )
 
-            yield version_alias
+            yield str(version_alias)
 
-            python_version_key = "@bazel_tools//tools/python:PY{}".format(
-                python_version
-            )
+            python_version_key = _make_python_version_key(python_version)
             top_alias.actual[python_version_key] = version_alias.name
 
-        yield top_alias
+        yield str(top_alias)
+
+    def _generate_py_library(
+        self,
+        requirement_name,
+        python_version,
+        sys_platform,
+        dependencies,
+    ):
+        return textwrap.dedent("""
+            py_library(
+                name = "{name}",
+                deps = {deps},
+            )
+        """).strip().format(
+            name=_make_platform_specific_alias(
+                requirement_name,
+                python_version,
+                sys_platform,
+            ),
+            deps=dependencies,
+        )
 
     def _generate_python_version_alias(
         self,
@@ -161,19 +197,41 @@ class BuildFileGenerator(object):
         python_version,
         sys_platforms,
     ):
-        alias = SelectAlias("{}__py{}".format(requirement_name, python_version))
+        alias = SelectAlias(
+            _make_python_specific_alias(requirement_name, python_version)
+        )
 
-        for sys_platform, source in sys_platforms.items():
+        for sys_platform in sys_platforms:
             bazel_platform = _convert_sys_platform_to_bazel(sys_platform)
 
-            platform_key = "@{rules_pip_repo}//platforms:{platform}".format(
-                rules_pip_repo=self.rules_pip_repo,
-                platform=bazel_platform,
+            platform_key = _make_platform_key(self.rules_pip_repo, bazel_platform)
+
+            alias.actual[platform_key] = _make_platform_specific_alias(
+                requirement_name,
+                python_version,
+                sys_platform,
             )
 
-            alias.actual[platform_key] = "@{}//:lib".format(source)
-
         return alias
+
+
+def _make_python_specific_alias(requirement_name, python_version):
+    return "{}__py{}".format(requirement_name, python_version)
+
+
+def _make_platform_specific_alias(requirement_name, python_version, sys_platform):
+    return "{}__py{}_{}".format(requirement_name, python_version, sys_platform)
+
+
+def _make_python_version_key(version):
+    return "@bazel_tools//tools/python:PY{version}".format(version=version)
+
+
+def _make_platform_key(rules_pip_repo, platform):
+    return "@{rules_pip_repo}//platforms:{platform}".format(
+        rules_pip_repo=rules_pip_repo,
+        platform=platform,
+    )
 
 
 def _convert_sys_platform_to_bazel(sys_platform):

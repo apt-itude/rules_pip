@@ -1,61 +1,77 @@
 {
-    "python-versions": [
-        2,
-        3
-    ],
-    "platforms": [
-        "osx",
-        "linux"
-    ],
-    "requirements": [
-        {
-            "name": "attrs",
-            "sources": [
-                {
-                    "url": "https://files.pythonhosted.org/packages/3a/e1/5f9023cc983f1a628a8c2fd051ad19e76ff7b142a0faf329336f9a62a514/attrs-18.2.0-py2.py3-none-any.whl",
-                    "sha256": "ca4be454458f9dec299268d472aaa5a11f67a4ff70093396e1ceae9c76cf4bbb",
-                    "is-wheel": true
-                }
-            ]
-        },
-        {
-            "name": "lxml",
-            "sources": [
-                {
-                    "url": "https://files.pythonhosted.org/packages/df/31/3e2754bc977738bf7ee1303b99f07599b455cd4a7f16f5be63704c446303/lxml-4.2.5-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl",
-                    "is-wheel": true,
-                    "python": 2,
-                    "platform": "osx"
-                },
-                {
-                    "url": "https://files.pythonhosted.org/packages/da/9c/901d13b9d84262082e81d38879600dcec28beb994ae08d1a7cbab4dc3ece/lxml-4.2.5-cp37-cp37m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl",
-                    "is-wheel": true,
-                    "python": 3,
-                    "platform": "osx"
-                },
-                {
-                    "url": "https://files.pythonhosted.org/packages/e5/14/f4343239f955442da9da1919a99f7311bc5627522741bada61b2349c8def/lxml-4.2.5-cp27-cp27mu-manylinux1_x86_64.whl",
-                    "is-wheel": true,
-                    "python": 2,
-                    "platform": "linux"
-                },
-                {
-                    "url": "https://files.pythonhosted.org/packages/03/a4/9eea8035fc7c7670e5eab97f34ff2ef0ddd78a491bf96df5accedb0e63f5/lxml-4.2.5-cp36-cp36m-manylinux1_x86_64.whl",
-                    "is-wheel": true,
-                    "python": 3,
-                    "platform": "linux"
-                }
-            ]
-        },
-        {
-            "name": "pyyaml",
-            "sources": [
-                {
-                    "url": "https://files.pythonhosted.org/packages/9e/a3/1d13970c3f36777c583f136c136f804d70f500168edc1edea6daa7200769/PyYAML-3.13.tar.gz",
-                    "sha256": "3ef3092145e9b70e3ddd2c7ad59bdd0252a94dfe3949721633e41344de00a6bf",
-                    "is-wheel": false
-                }
-            ]
-        }
-    ]
+  "environments": {
+    "darwin_py2": {
+      "python_version": 2,
+      "sys_platform": "darwin"
+    },
+    "darwin_py3": {
+      "python_version": 3,
+      "sys_platform": "darwin"
+    },
+    "linux_py2": {
+      "python_version": 2,
+      "sys_platform": "linux"
+    },
+    "linux_py3": {
+      "python_version": 3,
+      "sys_platform": "linux"
+    }
+  },
+  "sources": {
+    "attrs_19_1_0_py2_py3_none_any": {
+      "url": "https://files.pythonhosted.org/packages/23/96/d828354fa2dbdf216eaa7b7de0db692f12c234f7ef888cc14980ef40d1d2/attrs-19.1.0-py2.py3-none-any.whl",
+      "is-local": false,
+      "sha256": "69c0dbf2ed392de1cb5ec704444b08a5ef81680a61cb899dc08127123af36a79"
+    },
+    "lxml_4_2_5_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64": {
+      "url": "https://files.pythonhosted.org/packages/df/31/3e2754bc977738bf7ee1303b99f07599b455cd4a7f16f5be63704c446303/lxml-4.2.5-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl",
+      "is-local": false
+    },
+    "lxml_4_2_5_cp37_cp37m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64": {
+      "url": "https://files.pythonhosted.org/packages/da/9c/901d13b9d84262082e81d38879600dcec28beb994ae08d1a7cbab4dc3ece/lxml-4.2.5-cp37-cp37m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl",
+      "is-local": false
+    },
+    "lxml_4_2_5_cp27_cp27mu_manylinux1_x86_64": {
+      "url": "https://files.pythonhosted.org/packages/e5/14/f4343239f955442da9da1919a99f7311bc5627522741bada61b2349c8def/lxml-4.2.5-cp27-cp27mu-manylinux1_x86_64.whl",
+      "is-local": false
+    },
+    "lxml_4_2_5_cp36_cp36m_manylinux1_x86_64": {
+      "url": "https://files.pythonhosted.org/packages/03/a4/9eea8035fc7c7670e5eab97f34ff2ef0ddd78a491bf96df5accedb0e63f5/lxml-4.2.5-cp36-cp36m-manylinux1_x86_64.whl",
+      "is-local": false
+    }
+  },
+  "requirements": {
+    "attrs": {
+      "version": "19.1.0",
+      "is-direct": true,
+      "source": {
+        "darwin_py2": "attrs_19_1_0_py2_py3_none_any",
+        "darwin_py3": "attrs_19_1_0_py2_py3_none_any",
+        "linux_py2": "attrs_19_1_0_py2_py3_none_any",
+        "linux_py3": "attrs_19_1_0_py2_py3_none_any"
+      },
+      "dependencies": {
+        "darwin_py2": [],
+        "darwin_py3": [],
+        "linux_py2": [],
+        "linux_py3": []
+      }
+    },
+    "lxml": {
+      "version": "4.2.5",
+      "is-direct": true,
+      "source": {
+        "darwin_py2": "lxml_4_2_5_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
+        "darwin_py3": "lxml_4_2_5_cp37_cp37m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
+        "linux_py2": "lxml_4_2_5_cp27_cp27mu_manylinux1_x86_64",
+        "linux_py3": "lxml_4_2_5_cp36_cp36m_manylinux1_x86_64"
+      },
+      "dependencies": {
+        "darwin_py2": [],
+        "darwin_py3": [],
+        "linux_py2": [],
+        "linux_py3": []
+      }
+    }
+  }
 }

@@ -50,11 +50,10 @@ def _pip_repository_impl(repo_ctx):
     repo_ctx.download_and_extract(
         url = repo_ctx.attr.url,
         sha256 = repo_ctx.attr.sha256,
-        type = "zip" if repo_ctx.attr.is_wheel else "tar.gz"
+        type = "zip",
     )
 
-    if repo_ctx.attr.is_wheel:
-        _generate_wheel_build_file(repo_ctx)
+    _generate_wheel_build_file(repo_ctx)
 
 
 def _generate_wheel_build_file(repo_ctx):
@@ -66,6 +65,5 @@ pip_repository = repository_rule(
     attrs = {
         "url": attr.string(mandatory = True),
         "sha256": attr.string(),
-        "is_wheel": attr.bool(),
     }
 )

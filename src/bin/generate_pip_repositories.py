@@ -6,13 +6,13 @@ import textwrap
 
 def main():
     args = parse_args()
-    requirements = load_requirements(args.requirements_file)
+    lock_file = load_requirements(args.requirements_lock_file)
 
-    bzl_file_contents = BzlFileGenerator(requirements, args.rules_pip_repo).generate()
+    bzl_file_contents = BzlFileGenerator(lock_file, args.rules_pip_repo).generate()
     write_file(args.bzl_file_path, bzl_file_contents)
 
     build_file_contents = BuildFileGenerator(
-        requirements,
+        lock_file,
         args.rules_pip_repo
     ).generate()
     write_file(args.build_file_path, build_file_contents)
@@ -20,7 +20,7 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("requirements_file")
+    parser.add_argument("requirements_lock_file")
     parser.add_argument("bzl_file_path")
     parser.add_argument("build_file_path")
     parser.add_argument("rules_pip_repo")
@@ -28,19 +28,19 @@ def parse_args():
 
 
 def load_requirements(path):
-    with open(path) as requirements_file:
-        return json.load(requirements_file)
+    with open(path) as requirements_lock_file:
+        return json.load(requirements_lock_file)
 
 
 class BzlFileGenerator(object):
 
-    def __init__(self, requirements, rules_pip_repo):
-        self.requirements = requirements
+    def __init__(self, lock_file, rules_pip_repo):
+        self.lock_file = lock_file
         self.rules_pip_repo = rules_pip_repo
 
     @property
-    def requirements_list(self):
-        return self.requirements["requirements"]
+    def sources(self):
+        return self.lock_file["sources"]
 
     def generate(self):
         return textwrap.dedent("""
@@ -66,13 +66,7 @@ class BzlFileGenerator(object):
         )
 
     def _generate_all_pip_repo_rules(self):
-        for requirement in self.requirements_list:
-            for rule in self._generate_pip_repo_rules_for_requirement(requirement):
-                yield rule
-
-    def _generate_pip_repo_rules_for_requirement(self, requirement):
-        for source in requirement["sources"]:
-            name = generate_repo_name(requirement["name"], source)
+        for name, source in self.sources.items():
             yield self._generate_pip_repo_rule_for_source(name, source)
 
     def _generate_pip_repo_rule_for_source(self, name, source):
@@ -82,13 +76,11 @@ class BzlFileGenerator(object):
                     name = "{name}",
                     url = "{url}",
                     sha256 = "{sha256}",
-                    is_wheel = {is_wheel},
                 )
         """).strip().format(
             name=name,
             url=source["url"],
             sha256=source.get("sha256", ""),
-            is_wheel=source.get("is-wheel", False),
         )
 
 
@@ -101,35 +93,19 @@ def indent_line(line, level):
     return "{}{}".format((level * 4 * " "), line)
 
 
-def generate_repo_name(distro_name, source):
-    name = "pip__{}".format(distro_name)
-
-    if "python" in source:
-        name += "_py{}".format(source["python"])
-
-    if "platform" in source:
-        name += "_{}".format(source["platform"])
-
-    return name
-
-
 class BuildFileGenerator(object):
 
-    def __init__(self, requirements, rules_pip_repo):
-        self.requirements = requirements
+    def __init__(self, lock_file, rules_pip_repo):
+        self.lock_file = lock_file
         self.rules_pip_repo = rules_pip_repo
 
     @property
-    def python_versions_list(self):
-        return self.requirements["python-versions"]
+    def environments(self):
+        return self.lock_file["environments"]
 
     @property
-    def platforms_list(self):
-        return self.requirements["platforms"]
-
-    @property
-    def requirements_list(self):
-        return self.requirements["requirements"]
+    def requirements(self):
+        return self.lock_file["requirements"]
 
     def generate(self):
         return textwrap.dedent("""
@@ -144,17 +120,30 @@ class BuildFileGenerator(object):
         return "\n".join(self._generate_all_aliases())
 
     def _generate_all_aliases(self):
-        for requirement in self.requirements_list:
-            for alias in self._generate_aliases_for_requirement(requirement):
+        for name, requirement in self.requirements.items():
+            source_tree = self._build_source_tree(requirement["source"])
+            for alias in self._generate_aliases_for_requirement(name, source_tree):
                 yield str(alias)
 
-    def _generate_aliases_for_requirement(self, requirement):
-        top_alias = SelectAlias(requirement["name"])
+    def _build_source_tree(self, source_map):
+        tree = {}
 
-        for python_version in self.python_versions_list:
+        for environment_name, environment in self.environments.items():
+            python_version = environment["python_version"]
+            sys_platform = environment["sys_platform"]
+            source = source_map[environment_name]
+            tree.setdefault(python_version, {})[sys_platform] = source
+
+        return tree
+
+    def _generate_aliases_for_requirement(self, requirement_name, source_tree):
+        top_alias = SelectAlias(requirement_name)
+
+        for python_version, sys_platforms in source_tree.items():
             version_alias = self._generate_python_version_alias(
+                requirement_name,
                 python_version,
-                requirement,
+                sys_platforms,
             )
 
             yield version_alias
@@ -166,31 +155,32 @@ class BuildFileGenerator(object):
 
         yield top_alias
 
-    def _generate_python_version_alias(self, python_version, requirement):
-        alias = SelectAlias("{}__py{}".format(requirement["name"], python_version))
+    def _generate_python_version_alias(
+        self,
+        requirement_name,
+        python_version,
+        sys_platforms,
+    ):
+        alias = SelectAlias("{}__py{}".format(requirement_name, python_version))
 
-        for platform in self.platforms_list:
-            source = self._find_matching_source(requirement, python_version, platform)
+        for sys_platform, source in sys_platforms.items():
+            bazel_platform = _convert_sys_platform_to_bazel(sys_platform)
 
             platform_key = "@{rules_pip_repo}//platforms:{platform}".format(
                 rules_pip_repo=self.rules_pip_repo,
-                platform=platform,
+                platform=bazel_platform,
             )
-            repo_name = generate_repo_name(requirement["name"], source)
 
-            alias.actual[platform_key] = "@{}//:lib".format(repo_name)
+            alias.actual[platform_key] = "@{}//:lib".format(source)
 
         return alias
 
-    def _find_matching_source(self, requirement, python_version, platform):
-        for source in requirement["sources"]:
-            python_version_matches = source.get("python", python_version) == python_version
-            platform_matches = source.get("platform", platform) == platform
-            if python_version_matches and platform_matches:
-                return source
 
-        # TODO raise better exception
-        raise RuntimeError("No source matches target Python version and platform")
+def _convert_sys_platform_to_bazel(sys_platform):
+    if sys_platform == "darwin":
+        return "osx"
+
+    return sys_platform
 
 
 class SelectAlias(object):

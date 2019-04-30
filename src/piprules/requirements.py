@@ -1,5 +1,6 @@
 import copy
 import logging
+import sys
 
 from piprules import pipcompat, util
 
@@ -50,6 +51,13 @@ class Collection(object):
             )
 
         for name, details in lock_file.requirements.items():
+            matches_environment = any(
+                source.environment.matches_current()
+                for source in details.sources.values()
+            )
+            if not matches_environment:
+                continue
+
             canon_name = pipcompat.canonicalize_name(name)
             if canon_name in update_packages_canon_names:
                 LOG.debug("Package %s is being updated; not adding locked requirement")

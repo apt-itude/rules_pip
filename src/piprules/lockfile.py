@@ -30,6 +30,9 @@ class Environment(schematics.models.Model):
         if sys.version_info.major not in self.python_versions:
             self.python_versions.append(sys.version_info.major)
 
+    def matches_current(self):
+        return sys.version_info.major in self.python_versions
+
 
 def _merge_lists(first, second):
     return list(set(first) | set(second))

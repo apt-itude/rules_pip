@@ -2,6 +2,7 @@ import errno
 import json
 import logging
 import os
+import sys
 
 import schematics
 
@@ -27,9 +28,9 @@ class Dependency(schematics.models.Model):
             new_dependency.python_versions,
         )
 
-    def ensure_contains_python_version(self, version):
-        if version not in self.python_versions:
-            self.python_versions.append(version)
+    def add_current_environment(self):
+        if sys.version_info.major not in self.python_versions:
+            self.python_versions.append(sys.version_info.major)
 
 
 class Source(schematics.models.Model):
@@ -57,9 +58,9 @@ class Source(schematics.models.Model):
             new_source.python_versions,
         )
 
-    def ensure_contains_python_version(self, version):
-        if version not in self.python_versions:
-            self.python_versions.append(version)
+    def add_current_environment(self):
+        if sys.version_info.major not in self.python_versions:
+            self.python_versions.append(sys.version_info.major)
 
 
 def _merge_lists(first, second):

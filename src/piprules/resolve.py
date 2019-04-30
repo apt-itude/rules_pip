@@ -2,7 +2,6 @@ import contextlib
 import logging
 import os
 import shutil
-import sys
 import tempfile
 
 from piprules import lockfile, pipcompat, util
@@ -173,12 +172,12 @@ class Resolver(object):
         for dep in dist.requires():
             canon_dep_name = pipcompat.canonicalize_name(dep.name)
             locked_dep = locked_requirement.get_dependency(canon_dep_name)
-            locked_dep.ensure_contains_python_version(sys.version_info.major)
+            locked_dep.add_current_environment()
 
         link = requirement.link
         source = locked_requirement.get_source(link.url_without_fragment)
         source.is_local = use_local_wheel_source
-        source.ensure_contains_python_version(sys.version_info.major)
+        source.add_current_environment()
 
         if link.hash:
             # TODO this assumes the hash is sha256

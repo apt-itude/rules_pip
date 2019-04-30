@@ -11,26 +11,36 @@ from piprules import util
 
 LOG = logging.getLogger(__name__)
 
-_PYTHON_VERSIONS_TYPE = schematics.types.ListType(
-    schematics.types.IntType,
-    default=[],
-    max_size=2,
-)
+
+class Environment(schematics.models.Model):
+
+    python_versions = schematics.types.ListType(
+        schematics.types.IntType,
+        default=[],
+        max_size=2,
+    )
+
+    def update(self, new_environment):
+        self.python_versions = _merge_lists(
+            self.python_versions,
+            new_environment.python_versions,
+        )
+
+    def add_current(self):
+        if sys.version_info.major not in self.python_versions:
+            self.python_versions.append(sys.version_info.major)
+
+
+def _merge_lists(first, second):
+    return list(set(first) | set(second))
 
 
 class Dependency(schematics.models.Model):
 
-    python_versions = _PYTHON_VERSIONS_TYPE
+    environment = schematics.types.ModelType(Environment, default=Environment)
 
     def update(self, new_dependency):
-        self.python_versions = _merge_lists(
-            self.python_versions,
-            new_dependency.python_versions,
-        )
-
-    def add_current_environment(self):
-        if sys.version_info.major not in self.python_versions:
-            self.python_versions.append(sys.version_info.major)
+        self.environment.update(new_dependency.environment)
 
 
 class Source(schematics.models.Model):
@@ -41,7 +51,7 @@ class Source(schematics.models.Model):
         deserialize_from=["is-local"],
     )
     sha256 = schematics.types.StringType(serialize_when_none=False)
-    python_versions = _PYTHON_VERSIONS_TYPE
+    environment = schematics.types.ModelType(Environment, default=Environment)
 
     def update(self, new_source):
         if new_source.is_local != self.is_local:
@@ -52,19 +62,7 @@ class Source(schematics.models.Model):
 
         # TODO warn about hash changing?
         self.sha256 = new_source.sha256
-
-        self.python_versions = _merge_lists(
-            self.python_versions,
-            new_source.python_versions,
-        )
-
-    def add_current_environment(self):
-        if sys.version_info.major not in self.python_versions:
-            self.python_versions.append(sys.version_info.major)
-
-
-def _merge_lists(first, second):
-    return list(set(first) | set(second))
+        self.environment.update(new_source.environment)
 
 
 class Requirement(schematics.models.Model):

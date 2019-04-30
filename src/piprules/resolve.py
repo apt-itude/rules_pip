@@ -172,12 +172,12 @@ class Resolver(object):
         for dep in dist.requires():
             canon_dep_name = pipcompat.canonicalize_name(dep.name)
             locked_dep = locked_requirement.get_dependency(canon_dep_name)
-            locked_dep.add_current_environment()
+            locked_dep.environment.add_current()
 
         link = requirement.link
         source = locked_requirement.get_source(link.url_without_fragment)
         source.is_local = use_local_wheel_source
-        source.add_current_environment()
+        source.environment.add_current()
 
         if link.hash:
             # TODO this assumes the hash is sha256

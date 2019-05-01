@@ -112,6 +112,23 @@ pytest_test(
 )
 
 py_test(
+    name = "conditional_dependencies_test_py2",
+    srcs = ["conditional_dependencies_test.py"],
+    main = "conditional_dependencies_test.py",
+    deps = ["@pip//:isort"],
+    python_version = "PY2",
+)
+
+py_test(
+    name = "conditional_dependencies_test_py3",
+    srcs = ["conditional_dependencies_test.py"],
+    main = "conditional_dependencies_test.py",
+    deps = ["@pip//:isort"],
+    python_version = "PY3",
+)
+
+
+py_test(
     name = "multi_platform_multi_python_dep_test_py2",
     srcs = ["multi_platform_multi_python_dep_test.py"],
     main = "multi_platform_multi_python_dep_test.py",

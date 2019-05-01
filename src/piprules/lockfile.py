@@ -6,7 +6,7 @@ import sys
 
 import schematics
 
-from piprules import util
+from piprules import urlcompat, util
 
 
 LOG = logging.getLogger(__name__)
@@ -14,58 +14,52 @@ LOG = logging.getLogger(__name__)
 
 class Environment(schematics.models.Model):
 
-    python_versions = schematics.types.ListType(
-        schematics.types.IntType,
-        default=[],
-        max_size=2,
-    )
+    sys_platform = schematics.types.StringType()
+    python_version = schematics.types.IntType(choices=[2, 3])
 
-    def update(self, new_environment):
-        self.python_versions = _merge_lists(
-            self.python_versions,
-            new_environment.python_versions,
-        )
+    @classmethod
+    def from_current(cls):
+        environment = cls()
+        environment.set_to_current()
+        return environment
 
-    def add_current(self):
-        if sys.version_info.major not in self.python_versions:
-            self.python_versions.append(sys.version_info.major)
+    @property
+    def name(self):
+        return "{sys_platform}_py{python_version}".format(**self.to_primitive())
+
+    def set_to_current(self):
+        self.sys_platform = sys.platform
+        self.python_version = sys.version_info.major
 
     def matches_current(self):
-        return sys.version_info.major in self.python_versions
+        return self == _CURRENT_ENVIRONMENT
+
+    def __eq__(self, other):
+        return (
+            self.sys_platform == other.sys_platform and
+            self.python_version == other.python_version
+        )
+
+    def __hash__(self):
+        return hash((
+            self.sys_platform,
+            self.python_version,
+        ))
 
 
-def _merge_lists(first, second):
-    return list(set(first) | set(second))
-
-
-class Dependency(schematics.models.Model):
-
-    environment = schematics.types.ModelType(Environment, default=Environment)
-
-    def update(self, new_dependency):
-        self.environment.update(new_dependency.environment)
+_CURRENT_ENVIRONMENT = Environment.from_current()
 
 
 class Source(schematics.models.Model):
 
+    url = schematics.types.URLType()
+    # TODO remove this and just use file:// URL scheme to indicate local
     is_local = schematics.types.BooleanType(
         default=False,
         serialized_name="is-local",
         deserialize_from=["is-local"],
     )
     sha256 = schematics.types.StringType(serialize_when_none=False)
-    environment = schematics.types.ModelType(Environment, default=Environment)
-
-    def update(self, new_source):
-        if new_source.is_local != self.is_local:
-            # TODO raise better error
-            raise RuntimeError(
-                "A source cannot change from remote to local or vice-versa"
-            )
-
-        # TODO warn about hash changing?
-        self.sha256 = new_source.sha256
-        self.environment.update(new_source.environment)
 
 
 class Requirement(schematics.models.Model):
@@ -76,43 +70,45 @@ class Requirement(schematics.models.Model):
         serialized_name="is-direct",
         deserialize_from=["is-direct"],
     )
+    source = schematics.types.DictType(
+        schematics.types.StringType,
+        default={},
+    )
     dependencies = schematics.types.DictType(
-        schematics.types.ModelType(Dependency),
+        schematics.types.ListType(schematics.types.StringType),
+        default={},
+    )
+
+    def update(self, version, is_direct, source, dependencies):
+        version_is_different = version != self.version
+
+        self.version = version
+        self.is_direct = is_direct
+
+        if version_is_different:
+            # If the version is changing, remove existing sources and dependencies for
+            # other environments since they no longer apply
+            self.source = {
+                _CURRENT_ENVIRONMENT.name: source
+            }
+            self.dependencies = {
+                _CURRENT_ENVIRONMENT.name: dependencies
+            }
+        else:
+            self.source[_CURRENT_ENVIRONMENT.name] = source
+            self.dependencies[_CURRENT_ENVIRONMENT.name] = dependencies
+
+
+class LockFile(schematics.models.Model):
+
+    environments = schematics.types.DictType(
+        schematics.types.ModelType(Environment),
         default={},
     )
     sources = schematics.types.DictType(
         schematics.types.ModelType(Source),
         default={},
     )
-
-    def get_dependency(self, name):
-        return self.dependencies.setdefault(name, Dependency())
-
-    def get_source(self, url):
-        return self.sources.setdefault(url, Source())
-
-    def update(self, new_requirement):
-        version_is_changing = new_requirement.version != self.version
-
-        self.version = new_requirement.version
-        self.is_direct = new_requirement.is_direct
-
-        if version_is_changing:
-            self.dependencies = new_requirement.dependencies
-            self.sources = new_requirement.sources
-        else:
-            _update_dict_type_recursively(
-                self.dependencies,
-                new_requirement.dependencies,
-            )
-            _update_dict_type_recursively(
-                self.sources,
-                new_requirement.sources,
-            )
-
-
-class LockFile(schematics.models.Model):
-
     requirements = schematics.types.DictType(
         schematics.types.ModelType(Requirement),
         default={},
@@ -144,21 +140,40 @@ class LockFile(schematics.models.Model):
     def to_json(self):
         return json.dumps(self.to_primitive(), indent=2, sort_keys=True)
 
-    def get_requirement(self, name):
-        return self.requirements.setdefault(name, Requirement())
+    def update(self, resolved_requirements):
+        self.environments.setdefault(_CURRENT_ENVIRONMENT.name, _CURRENT_ENVIRONMENT)
 
-    def update(self, new_requirements):
-        _update_dict_type_recursively(self.requirements, new_requirements)
+        for resolved_requirement in resolved_requirements:
+            source_name = _get_source_name(resolved_requirement.source.url)
+
+            self.sources[source_name] = Source(dict(
+                url=resolved_requirement.source.url,
+                is_local=resolved_requirement.source.is_local,
+                sha256=resolved_requirement.source.sha256,
+            ))
+
+            requirement = self.requirements.setdefault(
+                resolved_requirement.name,
+                Requirement()
+            )
+            requirement.update(
+                version=resolved_requirement.version,
+                is_direct=resolved_requirement.is_direct,
+                source=source_name,
+                dependencies=resolved_requirement.dependencies,
+            )
+
+    def requirement_matches_current_environment(self, requirement):
+        return any(
+            self.environments[environment_name].matches_current()
+            for environment_name in requirement.source.keys()
+        )
 
 
-def _update_dict_type_recursively(existing, new):
-    for key, new_value in new.items():
-        try:
-            existing_value = existing[key]
-        except KeyError:
-            existing[key] = new_value
-        else:
-            existing_value.update(new_value)
+def _get_source_name(url):
+    path_part = urlcompat.urlparse(url).path
+    stem = util.get_path_stem(path_part)
+    return stem.replace("-", "_").replace(".", "_")
 
 
 def load(path, create_if_missing=True):

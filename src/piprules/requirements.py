@@ -51,11 +51,7 @@ class Collection(object):
             )
 
         for name, details in lock_file.requirements.items():
-            matches_environment = any(
-                source.environment.matches_current()
-                for source in details.sources.values()
-            )
-            if not matches_environment:
+            if not lock_file.requirement_matches_current_environment(details):
                 continue
 
             canon_name = pipcompat.canonicalize_name(name)

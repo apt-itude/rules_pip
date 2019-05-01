@@ -4,7 +4,7 @@ import os
 import shutil
 import tempfile
 
-from piprules import lockfile, pipcompat, util
+from piprules import pipcompat, util
 
 
 LOG = logging.getLogger(__name__)
@@ -135,11 +135,10 @@ class Resolver(object):
 
         self._build_wheels_if_necessary(requirements)
 
-        return {
-            name: locked_requirement
-            for name, locked_requirement
-            in self._generate_locked_requirements(requirements)
-        }
+        return [
+            self._create_resolved_requirement(requirement)
+            for requirement in requirements
+        ]
 
     def _build_wheels_if_necessary(self, requirements):
         build_failures = self._wheel_builder.build(
@@ -150,13 +149,7 @@ class Resolver(object):
             # TODO raise better error
             raise RuntimeError('Failed to build one or more wheels')
 
-    def _generate_locked_requirements(self, requirements):
-        for requirement in requirements:
-            name = pipcompat.canonicalize_name(requirement.name)
-            locked_requirement = self._create_locked_requirement(requirement)
-            yield name, locked_requirement
-
-    def _create_locked_requirement(self, requirement):
+    def _create_resolved_requirement(self, requirement):
         use_local_wheel_source = not requirement.link.is_wheel
 
         if use_local_wheel_source:
@@ -165,25 +158,27 @@ class Resolver(object):
         abstract_dist = pipcompat.make_abstract_dist(requirement)
         dist = abstract_dist.dist()
 
-        locked_requirement = lockfile.Requirement()
-        locked_requirement.version = dist.version
-        locked_requirement.is_direct = requirement.is_direct
-
-        for dep in dist.requires():
-            canon_dep_name = pipcompat.canonicalize_name(dep.name)
-            locked_dep = locked_requirement.get_dependency(canon_dep_name)
-            locked_dep.environment.add_current()
+        dependencies = [
+            pipcompat.canonicalize_name(dep.name)
+            for dep in dist.requires()
+        ]
 
         link = requirement.link
-        source = locked_requirement.get_source(link.url_without_fragment)
-        source.is_local = use_local_wheel_source
-        source.environment.add_current()
-
+        source = ResolvedRequirementSource(
+            link.url_without_fragment,
+            is_local=use_local_wheel_source,
+        )
         if link.hash:
             # TODO this assumes the hash is sha256
             source.sha256 = link.hash
 
-        return locked_requirement
+        return ResolvedRequirement(
+            pipcompat.canonicalize_name(requirement.name),
+            dist.version,
+            source,
+            is_direct=requirement.is_direct,
+            dependencies=dependencies,
+        )
 
     def _set_link_to_local_wheel(self, requirement):
         temp_wheel_path = _find_wheel(self._work_dirs.wheel, requirement.name)
@@ -227,3 +222,21 @@ def _copy_file(source_path, directory):
     dest_path = os.path.join(directory, base_name)
     shutil.copy(source_path, dest_path)
     return dest_path
+
+
+class ResolvedRequirement(object):
+
+    def __init__(self, name, version, source, is_direct=False, dependencies=None):
+        self.name = name
+        self.version = version
+        self.source = source
+        self.is_direct = is_direct
+        self.dependencies = dependencies or []
+
+
+class ResolvedRequirementSource(object):
+
+    def __init__(self, url, is_local=False, sha256=None):
+        self.url = url
+        self.is_local = is_local
+        self.sha256 = sha256

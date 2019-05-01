@@ -27,14 +27,14 @@ def main():
         packages_to_update=args.packages_to_update,
     )
 
-    locked_requirements = resolve.resolve_requirement_set(
+    resolved_requirements = resolve.resolve_requirement_set(
         requirement_set,
         pip_session,
         [args.index_url],
         args.wheel_dir,
     )
 
-    lock_file.update(locked_requirements)
+    lock_file.update(resolved_requirements)
 
     if args.lock_file_path:
         lock_file.dump(args.lock_file_path)

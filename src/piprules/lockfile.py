@@ -62,41 +62,41 @@ class Source(schematics.models.Model):
     sha256 = schematics.types.StringType(serialize_when_none=False)
 
 
-class Requirement(schematics.models.Model):
+class EnvironmentSpecificRequirementDetails(schematics.models.Model):
 
     version = schematics.types.StringType(required=True)
+    source = schematics.types.StringType(required=True)
+    dependencies = schematics.types.ListType(
+        schematics.types.StringType,
+        default=[],
+    )
+
+
+class Requirement(schematics.models.Model):
+
     is_direct = schematics.types.BooleanType(
         required=True,
         serialized_name="is-direct",
         deserialize_from=["is-direct"],
     )
-    source = schematics.types.DictType(
-        schematics.types.StringType,
-        default={},
-    )
-    dependencies = schematics.types.DictType(
-        schematics.types.ListType(schematics.types.StringType),
+    environments = schematics.types.DictType(
+        schematics.types.ModelType(EnvironmentSpecificRequirementDetails),
         default={},
     )
 
     def update(self, version, is_direct, source, dependencies):
-        version_is_different = version != self.version
-
-        self.version = version
         self.is_direct = is_direct
 
-        if version_is_different:
-            # If the version is changing, remove existing sources and dependencies for
-            # other environments since they no longer apply
-            self.source = {
-                _CURRENT_ENVIRONMENT.name: source
-            }
-            self.dependencies = {
-                _CURRENT_ENVIRONMENT.name: dependencies
-            }
-        else:
-            self.source[_CURRENT_ENVIRONMENT.name] = source
-            self.dependencies[_CURRENT_ENVIRONMENT.name] = dependencies
+        environment_specific_details = self.environments.setdefault(
+            _CURRENT_ENVIRONMENT.name,
+            EnvironmentSpecificRequirementDetails()
+        )
+        environment_specific_details.version = version
+        environment_specific_details.source = source
+        environment_specific_details.dependencies = dependencies
+
+    def get_environment_details(self):
+        return self.environments[_CURRENT_ENVIRONMENT.name]
 
 
 class LockFile(schematics.models.Model):
@@ -163,11 +163,10 @@ class LockFile(schematics.models.Model):
                 dependencies=resolved_requirement.dependencies,
             )
 
-    def requirement_matches_current_environment(self, requirement):
-        return any(
-            self.environments[environment_name].matches_current()
-            for environment_name in requirement.source.keys()
-        )
+    def iterate_requirements_for_current_environment(self):
+        for name, details in self.requirements.items():
+            if _CURRENT_ENVIRONMENT.name in details.environments:
+                yield name, details
 
 
 def _get_source_name(url):

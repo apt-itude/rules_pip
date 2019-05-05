@@ -50,11 +50,9 @@ class Collection(object):
                 update_packages_canon_names,
             )
 
-        for name, details in lock_file.requirements.items():
-            if not lock_file.requirement_matches_current_environment(details):
-                continue
-
+        for name, details in lock_file.iterate_requirements_for_current_environment():
             canon_name = pipcompat.canonicalize_name(name)
+
             if canon_name in update_packages_canon_names:
                 LOG.debug("Package %s is being updated; not adding locked requirement")
             else:

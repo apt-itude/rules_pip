@@ -58,7 +58,7 @@ class Collection(object):
             else:
                 requirement = _create_locked_requirement(
                     name,
-                    details.version,
+                    details.get_environment_details().version,
                     details.is_direct,
                 )
                 LOG.debug("Adding locked requirement %s", requirement)

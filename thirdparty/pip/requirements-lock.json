@@ -2,19 +2,129 @@
   "environments": {
     "darwin_py2": {
       "python_version": 2,
-      "sys_platform": "darwin"
+      "sys_platform": "darwin",
+      "requirements": {
+        "attrs": {
+          "version": "19.1.0",
+          "is-direct": true,
+          "source": "attrs_19_1_0_py2_py3_none_any",
+          "dependencies": []
+        },
+        "backports-functools-lru-cache": {
+          "version": "1.5",
+          "is-direct": false,
+          "source": "backports_functools_lru_cache_1_5_py2_py3_none_any",
+          "dependencies": []
+        },
+        "futures": {
+          "version": "3.2.0",
+          "is-direct": false,
+          "source": "futures_3_2_0_py2_none_any",
+          "dependencies": []
+        },
+        "isort": {
+          "version": "2.0.0",
+          "is-direct": true,
+          "source": "isort_4_3_17_py2_py3_none_any",
+          "dependencies": [
+            "backports-functools-lru-cache",
+            "futures"
+          ]
+        },
+        "lxml": {
+          "version": "4.2.5",
+          "is-direct": true,
+          "source": "lxml_4_2_5_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
+          "dependencies": []
+        }
+      }
     },
     "darwin_py3": {
       "python_version": 3,
-      "sys_platform": "darwin"
+      "sys_platform": "darwin",
+      "requirements": {
+        "attrs": {
+          "version": "19.1.0",
+          "is-direct": true,
+          "source": "attrs_19_1_0_py2_py3_none_any",
+          "dependencies": []
+        },
+        "isort": {
+          "version": "2.0.0",
+          "is-direct": true,
+          "source": "isort_4_3_17_py2_py3_none_any",
+          "dependencies": []
+        },
+        "lxml": {
+          "version": "4.2.5",
+          "is-direct": true,
+          "source": "lxml_4_2_5_cp37_cp37m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
+          "dependencies": []
+        }
+      }
     },
     "linux_py2": {
       "python_version": 2,
-      "sys_platform": "linux"
+      "sys_platform": "linux",
+      "requirements": {
+        "attrs": {
+          "version": "19.1.0",
+          "is-direct": true,
+          "source": "attrs_19_1_0_py2_py3_none_any",
+          "dependencies": []
+        },
+        "backports-functools-lru-cache": {
+          "version": "1.5",
+          "is-direct": false,
+          "source": "backports_functools_lru_cache_1_5_py2_py3_none_any",
+          "dependencies": []
+        },
+        "futures": {
+          "version": "3.2.0",
+          "is-direct": false,
+          "source": "futures_3_2_0_py2_none_any",
+          "dependencies": []
+        },
+        "isort": {
+          "version": "2.0.0",
+          "is-direct": true,
+          "source": "isort_4_3_17_py2_py3_none_any",
+          "dependencies": [
+            "backports-functools-lru-cache",
+            "futures"
+          ]
+        },
+        "lxml": {
+          "version": "4.2.5",
+          "is-direct": true,
+          "source": "lxml_4_2_5_cp27_cp27mu_manylinux1_x86_64",
+          "dependencies": []
+        }
+      }
     },
     "linux_py3": {
       "python_version": 3,
-      "sys_platform": "linux"
+      "sys_platform": "linux",
+      "requirements": {
+        "attrs": {
+          "version": "19.1.0",
+          "is-direct": true,
+          "source": "attrs_19_1_0_py2_py3_none_any",
+          "dependencies": []
+        },
+        "isort": {
+          "version": "2.0.0",
+          "is-direct": true,
+          "source": "isort_4_3_17_py2_py3_none_any",
+          "dependencies": []
+        },
+        "lxml": {
+          "version": "4.2.5",
+          "is-direct": true,
+          "source": "lxml_4_2_5_cp36_cp36m_manylinux1_x86_64",
+          "dependencies": []
+        }
+      }
     }
   },
   "sources": {
@@ -53,94 +163,6 @@
     "lxml_4_2_5_cp36_cp36m_manylinux1_x86_64": {
       "url": "https://files.pythonhosted.org/packages/03/a4/9eea8035fc7c7670e5eab97f34ff2ef0ddd78a491bf96df5accedb0e63f5/lxml-4.2.5-cp36-cp36m-manylinux1_x86_64.whl",
       "is-local": false
-    }
-  },
-  "requirements": {
-    "attrs": {
-      "version": "19.1.0",
-      "is-direct": true,
-      "source": {
-        "darwin_py2": "attrs_19_1_0_py2_py3_none_any",
-        "darwin_py3": "attrs_19_1_0_py2_py3_none_any",
-        "linux_py2": "attrs_19_1_0_py2_py3_none_any",
-        "linux_py3": "attrs_19_1_0_py2_py3_none_any"
-      },
-      "dependencies": {
-        "darwin_py2": [],
-        "darwin_py3": [],
-        "linux_py2": [],
-        "linux_py3": []
-      }
-    },
-    "backports-functools-lru-cache": {
-      "version": "1.5",
-      "is-direct": false,
-      "source": {
-        "darwin_py2": "backports_functools_lru_cache_1_5_py2_py3_none_any",
-        "darwin_py3": "backports_functools_lru_cache_1_5_py2_py3_none_any",
-        "linux_py2": "backports_functools_lru_cache_1_5_py2_py3_none_any",
-        "linux_py3": "backports_functools_lru_cache_1_5_py2_py3_none_any"
-      },
-      "dependencies": {
-        "darwin_py2": [],
-        "darwin_py3": [],
-        "linux_py2": [],
-        "linux_py3": []
-      }
-    },
-    "futures": {
-      "version": "3.2.0",
-      "is-direct": false,
-      "source": {
-        "darwin_py2": "futures_3_2_0_py2_none_any",
-        "darwin_py3": "futures_3_2_0_py2_none_any",
-        "linux_py2": "futures_3_2_0_py2_none_any",
-        "linux_py3": "futures_3_2_0_py2_none_any"
-      },
-      "dependencies": {
-        "darwin_py2": [],
-        "darwin_py3": [],
-        "linux_py2": [],
-        "linux_py3": []
-      }
-    },
-    "isort": {
-      "version": "2.0.0",
-      "is-direct": true,
-      "source": {
-        "darwin_py2": "isort_4_3_17_py2_py3_none_any",
-        "darwin_py3": "isort_4_3_17_py2_py3_none_any",
-        "linux_py2": "isort_4_3_17_py2_py3_none_any",
-        "linux_py3": "isort_4_3_17_py2_py3_none_any"
-      },
-      "dependencies": {
-        "darwin_py2": [
-          "backports-functools-lru-cache",
-          "futures"
-        ],
-        "darwin_py3": [],
-        "linux_py2": [
-          "backports-functools-lru-cache",
-          "futures"
-        ],
-        "linux_py3": []
-      }
-    },
-    "lxml": {
-      "version": "4.2.5",
-      "is-direct": true,
-      "source": {
-        "darwin_py2": "lxml_4_2_5_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
-        "darwin_py3": "lxml_4_2_5_cp37_cp37m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
-        "linux_py2": "lxml_4_2_5_cp27_cp27mu_manylinux1_x86_64",
-        "linux_py3": "lxml_4_2_5_cp36_cp36m_manylinux1_x86_64"
-      },
-      "dependencies": {
-        "darwin_py2": [],
-        "darwin_py3": [],
-        "linux_py2": [],
-        "linux_py3": []
-      }
     }
   }
 }

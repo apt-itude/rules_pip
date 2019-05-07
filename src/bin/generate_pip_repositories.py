@@ -103,10 +103,6 @@ class BuildFileGenerator(object):
     def environments(self):
         return self.lock_file["environments"]
 
-    @property
-    def requirements(self):
-        return self.lock_file["requirements"]
-
     def generate(self):
         return textwrap.dedent("""
             package(default_visibility = ["//visibility:public"])
@@ -120,93 +116,99 @@ class BuildFileGenerator(object):
         return "\n".join(self._generate_all_rules())
 
     def _generate_all_rules(self):
-        for name, requirement in self.requirements.items():
-            environment_tree = self._build_environment_tree(requirement)
-            for rule in self._generate_rules_for_requirement(name, environment_tree):
+        requirement_tree = self._build_requirement_tree()
+
+        for name, python_subtree in requirement_tree.items():
+            for rule in self._generate_rules_for_requirement(name, python_subtree):
                 yield rule
 
-    def _build_environment_tree(self, requirement):
-        source_map = requirement["source"]
-        dependencies_map = requirement["dependencies"]
-
+    def _build_requirement_tree(self):
         tree = {}
 
-        for environment_name, environment in self.environments.items():
-            python_version = environment["python_version"]
-            sys_platform = environment["sys_platform"]
+        for environment_name, environment_details in self.environments.items():
+            python_version = environment_details["python_version"]
+            sys_platform = environment_details["sys_platform"]
+            requirements = environment_details["requirements"]
 
-            source_label = "@{}//:lib".format(source_map[environment_name])
-            environment_dependencies = (
-                [source_label] +
-                [str(dep) for dep in dependencies_map[environment_name]]
-            )
-
-            tree.setdefault(python_version, {})[sys_platform] = environment_dependencies
+            for requirement_name, requirement_details in requirements.items():
+                tree.setdefault(
+                    requirement_name, {}
+                ).setdefault(
+                    python_version, {}
+                )[sys_platform] = requirement_details
 
         return tree
 
-    def _generate_rules_for_requirement(self, requirement_name, environment_tree):
+    def _generate_rules_for_requirement(self, requirement_name, python_subtree):
         top_alias = SelectAlias(requirement_name)
 
-        for python_version, sys_platforms in environment_tree.items():
-            for sys_platform, dependencies in sys_platforms.items():
+        for python_version, platform_subtree in python_subtree.items():
+            for sys_platform, requirement_details in platform_subtree.items():
                 yield self._generate_py_library(
                     requirement_name,
+                    requirement_details,
                     python_version,
                     sys_platform,
-                    dependencies,
                 )
 
             version_alias = self._generate_python_version_alias(
                 requirement_name,
                 python_version,
-                sys_platforms,
+                platform_subtree,
             )
 
             yield str(version_alias)
 
-            python_version_key = _make_python_version_key(python_version)
-            top_alias.actual[python_version_key] = version_alias.name
+            python_version_label = _make_python_version_label(python_version)
+            top_alias.actual[python_version_label] = version_alias.name
 
         yield str(top_alias)
 
     def _generate_py_library(
         self,
         requirement_name,
+        requirement_details,
         python_version,
         sys_platform,
-        dependencies,
     ):
+        name = _make_environment_specific_alias(
+            requirement_name,
+            python_version,
+            sys_platform,
+        )
+        deps = list(self._generate_dependency_labels(requirement_details))
+
         return textwrap.dedent("""
             py_library(
                 name = "{name}",
                 deps = {deps},
             )
         """).strip().format(
-            name=_make_platform_specific_alias(
-                requirement_name,
-                python_version,
-                sys_platform,
-            ),
-            deps=dependencies,
+            name=name,
+            deps=deps,
         )
+
+    def _generate_dependency_labels(self, requirement_details):
+        yield _make_source_label(requirement_details["source"])
+        for dep in requirement_details["dependencies"]:
+            yield str(dep)
 
     def _generate_python_version_alias(
         self,
         requirement_name,
         python_version,
-        sys_platforms,
+        platform_subtree,
     ):
         alias = SelectAlias(
             _make_python_specific_alias(requirement_name, python_version)
         )
 
-        for sys_platform in sys_platforms:
+        for sys_platform in platform_subtree:
             bazel_platform = _convert_sys_platform_to_bazel(sys_platform)
 
-            platform_key = _make_platform_key(self.rules_pip_repo, bazel_platform)
+            platform_label = _make_platform_label(self.rules_pip_repo, bazel_platform)
 
-            alias.actual[platform_key] = _make_platform_specific_alias(
+            alias.actual[platform_label] = _make_environment_specific_alias(
                 requirement_name,
                 python_version,
                 sys_platform,
@@ -219,19 +221,23 @@ def _make_python_specific_alias(requirement_name, python_version):
     return "{}__py{}".format(requirement_name, python_version)
 
 
-def _make_platform_specific_alias(requirement_name, python_version, sys_platform):
+def _make_environment_specific_alias(requirement_name, python_version, sys_platform):
     return "{}__py{}_{}".format(requirement_name, python_version, sys_platform)
 
 
-def _make_python_version_key(version):
+def _make_python_version_label(version):
     return "@bazel_tools//tools/python:PY{version}".format(version=version)
 
 
-def _make_platform_key(rules_pip_repo, platform):
+def _make_platform_label(rules_pip_repo, platform):
     return "@{rules_pip_repo}//platforms:{platform}".format(
         rules_pip_repo=rules_pip_repo,
         platform=platform,
     )
+
+
+def _make_source_label(source_name):
+    return "@{}//:lib".format(source_name)
 
 
 def _convert_sys_platform_to_bazel(sys_platform):

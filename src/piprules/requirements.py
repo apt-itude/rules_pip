@@ -50,7 +50,9 @@ class Collection(object):
                 update_packages_canon_names,
             )
 
-        for name, details in lock_file.iterate_requirements_for_current_environment():
+        lock_file_requirements = lock_file.get_requirements_for_current_environment()
+
+        for name, details in lock_file_requirements.items():
             canon_name = pipcompat.canonicalize_name(name)
 
             if canon_name in update_packages_canon_names:

@@ -12,10 +12,29 @@ from piprules import urlcompat, util
 LOG = logging.getLogger(__name__)
 
 
+class Requirement(schematics.models.Model):
+
+    version = schematics.types.StringType(required=True)
+    is_direct = schematics.types.BooleanType(
+        required=True,
+        serialized_name="is-direct",
+        deserialize_from=["is-direct"],
+    )
+    source = schematics.types.StringType(required=True)
+    dependencies = schematics.types.ListType(
+        schematics.types.StringType,
+        default=[],
+    )
+
+
 class Environment(schematics.models.Model):
 
     sys_platform = schematics.types.StringType()
     python_version = schematics.types.IntType(choices=[2, 3])
+    requirements = schematics.types.DictType(
+        schematics.types.ModelType(Requirement),
+        default={},
+    )
 
     @classmethod
     def from_current(cls):
@@ -62,43 +81,6 @@ class Source(schematics.models.Model):
     sha256 = schematics.types.StringType(serialize_when_none=False)
 
 
-class EnvironmentSpecificRequirementDetails(schematics.models.Model):
-
-    version = schematics.types.StringType(required=True)
-    source = schematics.types.StringType(required=True)
-    dependencies = schematics.types.ListType(
-        schematics.types.StringType,
-        default=[],
-    )
-
-
-class Requirement(schematics.models.Model):
-
-    is_direct = schematics.types.BooleanType(
-        required=True,
-        serialized_name="is-direct",
-        deserialize_from=["is-direct"],
-    )
-    environments = schematics.types.DictType(
-        schematics.types.ModelType(EnvironmentSpecificRequirementDetails),
-        default={},
-    )
-
-    def update(self, version, is_direct, source, dependencies):
-        self.is_direct = is_direct
-
-        environment_specific_details = self.environments.setdefault(
-            _CURRENT_ENVIRONMENT.name,
-            EnvironmentSpecificRequirementDetails()
-        )
-        environment_specific_details.version = version
-        environment_specific_details.source = source
-        environment_specific_details.dependencies = dependencies
-
-    def get_environment_details(self):
-        return self.environments[_CURRENT_ENVIRONMENT.name]
-
-
 class LockFile(schematics.models.Model):
 
     environments = schematics.types.DictType(
@@ -107,10 +89,6 @@ class LockFile(schematics.models.Model):
     )
     sources = schematics.types.DictType(
         schematics.types.ModelType(Source),
-        default={},
-    )
-    requirements = schematics.types.DictType(
-        schematics.types.ModelType(Requirement),
         default={},
     )
 
@@ -140,33 +118,36 @@ class LockFile(schematics.models.Model):
     def to_json(self):
         return json.dumps(self.to_primitive(), indent=2, sort_keys=True)
 
-    def update(self, resolved_requirements):
-        self.environments.setdefault(_CURRENT_ENVIRONMENT.name, _CURRENT_ENVIRONMENT)
+    def update_requirements_for_current_environment(self, resolved_requirements):
+        new_requirements = {}
 
         for resolved_requirement in resolved_requirements:
             source_name = _get_source_name(resolved_requirement.source.url)
 
+            # TODO raise error if source exists and is different
             self.sources[source_name] = Source(dict(
                 url=resolved_requirement.source.url,
                 is_local=resolved_requirement.source.is_local,
                 sha256=resolved_requirement.source.sha256,
             ))
 
-            requirement = self.requirements.setdefault(
-                resolved_requirement.name,
-                Requirement()
-            )
-            requirement.update(
+            new_requirements[resolved_requirement.name] = Requirement(dict(
                 version=resolved_requirement.version,
                 is_direct=resolved_requirement.is_direct,
                 source=source_name,
                 dependencies=resolved_requirement.dependencies,
-            )
+            ))
 
-    def iterate_requirements_for_current_environment(self):
-        for name, details in self.requirements.items():
-            if _CURRENT_ENVIRONMENT.name in details.environments:
-                yield name, details
+        self._get_or_create_current_environment().requirements = new_requirements
+
+    def _get_or_create_current_environment(self):
+        return self.environments.setdefault(
+            _CURRENT_ENVIRONMENT.name,
+            _CURRENT_ENVIRONMENT
+        )
+
+    def get_requirements_for_current_environment(self):
+        return self._get_or_create_current_environment().requirements
 
 
 def _get_source_name(url):

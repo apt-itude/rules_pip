@@ -4,7 +4,7 @@ import os
 import shutil
 import tempfile
 
-from piprules import pipcompat, util
+from piprules import pipcompat, urlcompat, util
 
 
 LOG = logging.getLogger(__name__)
@@ -165,10 +165,7 @@ class Resolver(object):
         ]
 
         link = requirement.link
-        source = ResolvedRequirementSource(
-            link.url_without_fragment,
-            is_local=use_local_wheel_source,
-        )
+        source = ResolvedRequirementSource(link.url_without_fragment)
         if link.hash:
             # TODO this assumes the hash is sha256
             source.sha256 = link.hash
@@ -237,7 +234,23 @@ class ResolvedRequirement(object):
 
 class ResolvedRequirementSource(object):
 
-    def __init__(self, url, is_local=False, sha256=None):
+    def __init__(self, url, sha256=None):
         self.url = url
-        self.is_local = is_local
         self.sha256 = sha256
+
+    def is_local(self):
+        return self._parse_url().scheme == 'file'
+
+    def _parse_url(self):
+        return urlcompat.urlparse(self.url)
+
+    def get_file_name(self):
+        return os.path.basename(self._get_path())
+
+    def _get_path(self):
+        return self._parse_url().path
+
+    def get_name(self):
+        stem = util.get_path_stem(self._get_path())
+        return stem.replace("-", "_").replace(".", "_")
+

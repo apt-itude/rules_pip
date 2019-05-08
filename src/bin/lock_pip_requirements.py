@@ -1,5 +1,6 @@
 import argparse
 import logging
+import os
 import sys
 
 from piprules import lockfile, pipcompat, requirements, resolve
@@ -13,11 +14,15 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     pipcompat.LOG.setLevel(logging.INFO)
 
+    workspace_directory = get_workspace_directory()
+    lock_file_path = os.path.join(workspace_directory, args.lock_file_path)
+    wheel_directory = os.path.join(workspace_directory, args.wheel_dir)
+
     LOG.info("Locking pip requirements for Python %s", sys.version_info.major)
 
     pip_session = pipcompat.PipSession()
 
-    lock_file = lockfile.load(args.lock_file_path or '')
+    lock_file = lockfile.load(lock_file_path or '')
 
     requirement_set = requirements.collect_and_condense(
         pip_session,
@@ -31,13 +36,18 @@ def main():
         requirement_set,
         pip_session,
         [args.index_url],
-        args.wheel_dir,
+        wheel_directory,
     )
 
     lock_file.update_requirements_for_current_environment(resolved_requirements)
 
-    if args.lock_file_path:
-        lock_file.dump(args.lock_file_path)
+    # TODO raise error if wheel dir changes?
+    # Set this to the wheel dir relative to the WORKSPACE root so it doesn't include any
+    # parts of the path custom to the current environment
+    lock_file.wheel_directory = args.wheel_dir
+
+    if lock_file_path:
+        lock_file.dump(lock_file_path)
     else:
         print(lock_file.to_json())
 
@@ -71,6 +81,13 @@ def parse_args():
         nargs="*",
     )
     return parser.parse_args()
+
+
+def get_workspace_directory():
+    try:
+        return os.environ["BUILD_WORKSPACE_DIRECTORY"]
+    except KeyError:
+        sys.exit("This tool must by executed via 'bazel run'")
 
 
 if __name__ == "__main__":

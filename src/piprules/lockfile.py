@@ -6,7 +6,7 @@ import sys
 
 import schematics
 
-from piprules import urlcompat, util
+from piprules import util
 
 
 LOG = logging.getLogger(__name__)
@@ -71,13 +71,9 @@ _CURRENT_ENVIRONMENT = Environment.from_current()
 
 class Source(schematics.models.Model):
 
-    url = schematics.types.URLType()
-    # TODO remove this and just use file:// URL scheme to indicate local
-    is_local = schematics.types.BooleanType(
-        default=False,
-        serialized_name="is-local",
-        deserialize_from=["is-local"],
-    )
+    # TODO validate that at least one of these two is set
+    url = schematics.types.URLType(serialize_when_none=False)
+    file = schematics.types.StringType(serialize_when_none=False)
     sha256 = schematics.types.StringType(serialize_when_none=False)
 
 
@@ -91,6 +87,7 @@ class LockFile(schematics.models.Model):
         schematics.types.ModelType(Source),
         default={},
     )
+    wheel_directory = schematics.types.StringType()
 
     @classmethod
     def load(cls, path):
@@ -122,14 +119,19 @@ class LockFile(schematics.models.Model):
         new_requirements = {}
 
         for resolved_requirement in resolved_requirements:
-            source_name = _get_source_name(resolved_requirement.source.url)
+            resolved_source = resolved_requirement.source
+            source_name = resolved_source.get_name()
 
             # TODO raise error if source exists and is different
-            self.sources[source_name] = Source(dict(
-                url=resolved_requirement.source.url,
-                is_local=resolved_requirement.source.is_local,
-                sha256=resolved_requirement.source.sha256,
-            ))
+            if resolved_source.is_local():
+                self.sources[source_name] = Source(dict(
+                    file=resolved_source.get_file_name(),
+                ))
+            else:
+                self.sources[source_name] = Source(dict(
+                    url=resolved_source.url,
+                    sha256=resolved_source.sha256,
+                ))
 
             new_requirements[resolved_requirement.name] = Requirement(dict(
                 version=resolved_requirement.version,
@@ -148,12 +150,6 @@ class LockFile(schematics.models.Model):
 
     def get_requirements_for_current_environment(self):
         return self._get_or_create_current_environment().requirements
-
-
-def _get_source_name(url):
-    path_part = urlcompat.urlparse(url).path
-    stem = util.get_path_stem(path_part)
-    return stem.replace("-", "_").replace(".", "_")
 
 
 def load(path, create_if_missing=True):

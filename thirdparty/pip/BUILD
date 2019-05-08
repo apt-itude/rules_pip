@@ -8,5 +8,5 @@ exports_files([
 pip_lock(
     name = "lock",
     requirements = [":requirements.in"],
-    requirements_lock = "requirements-lock-new.json",
+    requirements_lock = "requirements-lock.json",
 )

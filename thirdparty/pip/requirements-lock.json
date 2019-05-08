@@ -2,167 +2,354 @@
   "environments": {
     "darwin_py2": {
       "python_version": 2,
-      "sys_platform": "darwin",
       "requirements": {
+        "atomicwrites": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "atomicwrites_1_3_0_py2_py3_none_any",
+          "version": "1.3.0"
+        },
         "attrs": {
-          "version": "19.1.0",
-          "is-direct": true,
+          "dependencies": [],
+          "is-direct": false,
           "source": "attrs_19_1_0_py2_py3_none_any",
-          "dependencies": []
+          "version": "19.1.0"
         },
         "backports-functools-lru-cache": {
-          "version": "1.5",
+          "dependencies": [],
           "is-direct": false,
           "source": "backports_functools_lru_cache_1_5_py2_py3_none_any",
-          "dependencies": []
+          "version": "1.5"
+        },
+        "funcsigs": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "funcsigs_1_0_2_py2_py3_none_any",
+          "version": "1.0.2"
         },
         "futures": {
-          "version": "3.2.0",
+          "dependencies": [],
           "is-direct": false,
           "source": "futures_3_2_0_py2_none_any",
-          "dependencies": []
+          "version": "3.2.0"
         },
         "isort": {
-          "version": "2.0.0",
-          "is-direct": true,
-          "source": "isort_4_3_17_py2_py3_none_any",
           "dependencies": [
             "backports-functools-lru-cache",
             "futures"
-          ]
+          ],
+          "is-direct": true,
+          "source": "isort_4_3_18_py2_py3_none_any",
+          "version": "4.3.18"
         },
         "lxml": {
-          "version": "4.2.5",
+          "dependencies": [],
+          "is-direct": false,
+          "source": "lxml_4_3_3_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
+          "version": "4.3.3"
+        },
+        "mock": {
+          "dependencies": [
+            "six",
+            "funcsigs"
+          ],
+          "is-direct": false,
+          "source": "mock_3_0_5_py2_py3_none_any",
+          "version": "3.0.5"
+        },
+        "more-itertools": {
+          "dependencies": [
+            "six"
+          ],
+          "is-direct": false,
+          "source": "more_itertools_5_0_0_py2_none_any",
+          "version": "5.0.0"
+        },
+        "pathlib2": {
+          "dependencies": [
+            "six",
+            "scandir"
+          ],
           "is-direct": true,
-          "source": "lxml_4_2_5_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
-          "dependencies": []
+          "source": "pathlib2_2_3_3_py2_py3_none_any",
+          "version": "2.3.3"
+        },
+        "pluggy": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "pluggy_0_11_0_py2_py3_none_any",
+          "version": "0.11.0"
+        },
+        "py": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "py_1_8_0_py2_py3_none_any",
+          "version": "1.8.0"
+        },
+        "pyang": {
+          "dependencies": [
+            "lxml"
+          ],
+          "is-direct": true,
+          "source": "pyang_1_7_8_py2_py3_none_any",
+          "version": "1.7.8"
+        },
+        "pytest": {
+          "dependencies": [
+            "funcsigs",
+            "pluggy",
+            "setuptools",
+            "py",
+            "pathlib2",
+            "six",
+            "attrs",
+            "more-itertools",
+            "atomicwrites"
+          ],
+          "is-direct": true,
+          "source": "pytest_4_4_1_py2_py3_none_any",
+          "version": "4.4.1"
+        },
+        "pytest-mock": {
+          "dependencies": [
+            "pytest",
+            "mock"
+          ],
+          "is-direct": true,
+          "source": "pytest_mock_1_10_4_py2_py3_none_any",
+          "version": "1.10.4"
+        },
+        "pyyaml": {
+          "dependencies": [],
+          "is-direct": true,
+          "source": "PyYAML_5_1_cp27_cp27m_macosx_10_13_x86_64",
+          "version": "5.1"
+        },
+        "scandir": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "scandir_1_10_0_cp27_cp27m_macosx_10_13_x86_64",
+          "version": "1.10.0"
+        },
+        "setuptools": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "setuptools_41_0_1_py2_py3_none_any",
+          "version": "41.0.1"
+        },
+        "six": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "six_1_12_0_py2_py3_none_any",
+          "version": "1.12.0"
         }
-      }
+      },
+      "sys_platform": "darwin"
     },
     "darwin_py3": {
       "python_version": 3,
-      "sys_platform": "darwin",
       "requirements": {
+        "atomicwrites": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "atomicwrites_1_3_0_py2_py3_none_any",
+          "version": "1.3.0"
+        },
         "attrs": {
-          "version": "19.1.0",
-          "is-direct": true,
+          "dependencies": [],
+          "is-direct": false,
           "source": "attrs_19_1_0_py2_py3_none_any",
-          "dependencies": []
+          "version": "19.1.0"
         },
         "isort": {
-          "version": "2.0.0",
+          "dependencies": [],
           "is-direct": true,
-          "source": "isort_4_3_17_py2_py3_none_any",
-          "dependencies": []
+          "source": "isort_4_3_18_py2_py3_none_any",
+          "version": "4.3.18"
         },
         "lxml": {
-          "version": "4.2.5",
-          "is-direct": true,
-          "source": "lxml_4_2_5_cp37_cp37m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
-          "dependencies": []
-        }
-      }
-    },
-    "linux_py2": {
-      "python_version": 2,
-      "sys_platform": "linux",
-      "requirements": {
-        "attrs": {
-          "version": "19.1.0",
-          "is-direct": true,
-          "source": "attrs_19_1_0_py2_py3_none_any",
-          "dependencies": []
-        },
-        "backports-functools-lru-cache": {
-          "version": "1.5",
+          "dependencies": [],
           "is-direct": false,
-          "source": "backports_functools_lru_cache_1_5_py2_py3_none_any",
-          "dependencies": []
+          "source": "lxml_4_3_3_cp37_cp37m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
+          "version": "4.3.3"
         },
-        "futures": {
-          "version": "3.2.0",
+        "more-itertools": {
+          "dependencies": [],
           "is-direct": false,
-          "source": "futures_3_2_0_py2_none_any",
-          "dependencies": []
+          "source": "more_itertools_7_0_0_py3_none_any",
+          "version": "7.0.0"
         },
-        "isort": {
-          "version": "2.0.0",
-          "is-direct": true,
-          "source": "isort_4_3_17_py2_py3_none_any",
+        "pluggy": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "pluggy_0_11_0_py2_py3_none_any",
+          "version": "0.11.0"
+        },
+        "py": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "py_1_8_0_py2_py3_none_any",
+          "version": "1.8.0"
+        },
+        "pyang": {
           "dependencies": [
-            "backports-functools-lru-cache",
-            "futures"
-          ]
-        },
-        "lxml": {
-          "version": "4.2.5",
+            "lxml"
+          ],
           "is-direct": true,
-          "source": "lxml_4_2_5_cp27_cp27mu_manylinux1_x86_64",
-          "dependencies": []
+          "source": "pyang_1_7_8_py2_py3_none_any",
+          "version": "1.7.8"
+        },
+        "pytest": {
+          "dependencies": [
+            "setuptools",
+            "six",
+            "attrs",
+            "py",
+            "pluggy",
+            "atomicwrites",
+            "more-itertools"
+          ],
+          "is-direct": true,
+          "source": "pytest_4_4_1_py2_py3_none_any",
+          "version": "4.4.1"
+        },
+        "pytest-mock": {
+          "dependencies": [
+            "pytest"
+          ],
+          "is-direct": true,
+          "source": "pytest_mock_1_10_4_py2_py3_none_any",
+          "version": "1.10.4"
+        },
+        "pyyaml": {
+          "dependencies": [],
+          "is-direct": true,
+          "source": "PyYAML_5_1_cp37_cp37m_macosx_10_13_x86_64",
+          "version": "5.1"
+        },
+        "setuptools": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "setuptools_41_0_1_py2_py3_none_any",
+          "version": "41.0.1"
+        },
+        "six": {
+          "dependencies": [],
+          "is-direct": false,
+          "source": "six_1_12_0_py2_py3_none_any",
+          "version": "1.12.0"
         }
-      }
-    },
-    "linux_py3": {
-      "python_version": 3,
-      "sys_platform": "linux",
-      "requirements": {
-        "attrs": {
-          "version": "19.1.0",
-          "is-direct": true,
-          "source": "attrs_19_1_0_py2_py3_none_any",
-          "dependencies": []
-        },
-        "isort": {
-          "version": "2.0.0",
-          "is-direct": true,
-          "source": "isort_4_3_17_py2_py3_none_any",
-          "dependencies": []
-        },
-        "lxml": {
-          "version": "4.2.5",
-          "is-direct": true,
-          "source": "lxml_4_2_5_cp36_cp36m_manylinux1_x86_64",
-          "dependencies": []
-        }
-      }
+      },
+      "sys_platform": "darwin"
     }
   },
   "sources": {
-    "attrs_19_1_0_py2_py3_none_any": {
-      "url": "https://files.pythonhosted.org/packages/23/96/d828354fa2dbdf216eaa7b7de0db692f12c234f7ef888cc14980ef40d1d2/attrs-19.1.0-py2.py3-none-any.whl",
+    "PyYAML_5_1_cp27_cp27m_macosx_10_13_x86_64": {
+      "is-local": true,
+      "url": "file:///Users/athompson/code/rules_pip/thirdparty/pip/wheels/PyYAML-5.1-cp27-cp27m-macosx_10_13_x86_64.whl"
+    },
+    "PyYAML_5_1_cp37_cp37m_macosx_10_13_x86_64": {
+      "is-local": true,
+      "url": "file:///Users/athompson/code/rules_pip/thirdparty/pip/wheels/PyYAML-5.1-cp37-cp37m-macosx_10_13_x86_64.whl"
+    },
+    "atomicwrites_1_3_0_py2_py3_none_any": {
       "is-local": false,
-      "sha256": "69c0dbf2ed392de1cb5ec704444b08a5ef81680a61cb899dc08127123af36a79"
+      "sha256": "03472c30eb2c5d1ba9227e4c2ca66ab8287fbfbbda3888aa93dc2e28fc6811b4",
+      "url": "https://files.pythonhosted.org/packages/52/90/6155aa926f43f2b2a22b01be7241be3bfd1ceaf7d0b3267213e8127d41f4/atomicwrites-1.3.0-py2.py3-none-any.whl"
+    },
+    "attrs_19_1_0_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "69c0dbf2ed392de1cb5ec704444b08a5ef81680a61cb899dc08127123af36a79",
+      "url": "https://files.pythonhosted.org/packages/23/96/d828354fa2dbdf216eaa7b7de0db692f12c234f7ef888cc14980ef40d1d2/attrs-19.1.0-py2.py3-none-any.whl"
     },
     "backports_functools_lru_cache_1_5_py2_py3_none_any": {
-      "url": "https://files.pythonhosted.org/packages/03/8e/2424c0e65c4a066e28f539364deee49b6451f8fcd4f718fefa50cc3dcf48/backports.functools_lru_cache-1.5-py2.py3-none-any.whl",
       "is-local": false,
-      "sha256": "f0b0e4eba956de51238e17573b7087e852dfe9854afd2e9c873f73fc0ca0a6dd"
+      "sha256": "f0b0e4eba956de51238e17573b7087e852dfe9854afd2e9c873f73fc0ca0a6dd",
+      "url": "https://files.pythonhosted.org/packages/03/8e/2424c0e65c4a066e28f539364deee49b6451f8fcd4f718fefa50cc3dcf48/backports.functools_lru_cache-1.5-py2.py3-none-any.whl"
+    },
+    "funcsigs_1_0_2_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "330cc27ccbf7f1e992e69fef78261dc7c6569012cf397db8d3de0234e6c937ca",
+      "url": "https://files.pythonhosted.org/packages/69/cb/f5be453359271714c01b9bd06126eaf2e368f1fddfff30818754b5ac2328/funcsigs-1.0.2-py2.py3-none-any.whl"
     },
     "futures_3_2_0_py2_none_any": {
-      "url": "https://files.pythonhosted.org/packages/2d/99/b2c4e9d5a30f6471e410a146232b4118e697fa3ffc06d6a65efde84debd0/futures-3.2.0-py2-none-any.whl",
       "is-local": false,
-      "sha256": "ec0a6cb848cc212002b9828c3e34c675e0c9ff6741dc445cab6fdd4e1085d1f1"
+      "sha256": "ec0a6cb848cc212002b9828c3e34c675e0c9ff6741dc445cab6fdd4e1085d1f1",
+      "url": "https://files.pythonhosted.org/packages/2d/99/b2c4e9d5a30f6471e410a146232b4118e697fa3ffc06d6a65efde84debd0/futures-3.2.0-py2-none-any.whl"
     },
-    "isort_4_3_17_py2_py3_none_any": {
-      "url": "https://files.pythonhosted.org/packages/d3/57/2c79076db3c2aa9fc482628b8e70a9f6f2b4cb4b276636645b7080ac26ae/isort-4.3.17-py2.py3-none-any.whl",
+    "isort_4_3_18_py2_py3_none_any": {
       "is-local": false,
-      "sha256": "01cb7e1ca5e6c5b3f235f0385057f70558b70d2f00320208825fa62887292f43"
+      "sha256": "1349c6f7c2a0f7539f5f2ace51a9a8e4a37086ce4de6f78f5f53fb041d0a3cd5",
+      "url": "https://files.pythonhosted.org/packages/9a/a2/2dc9c43667a5a18c8956dc9c0e771d4e7d69de2c1b2689f2231a7aed7695/isort-4.3.18-py2.py3-none-any.whl"
     },
-    "lxml_4_2_5_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64": {
-      "url": "https://files.pythonhosted.org/packages/df/31/3e2754bc977738bf7ee1303b99f07599b455cd4a7f16f5be63704c446303/lxml-4.2.5-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl",
-      "is-local": false
+    "lxml_4_3_3_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64": {
+      "is-local": false,
+      "sha256": "3210da6f36cf4b835ff1be853962b22cc354d506f493b67a4303c88bbb40d57b",
+      "url": "https://files.pythonhosted.org/packages/70/ce/b55b64eef2cd7f1b6694d5312b12abeccf5c8f9134832c963eebe15250c8/lxml-4.3.3-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl"
     },
-    "lxml_4_2_5_cp37_cp37m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64": {
-      "url": "https://files.pythonhosted.org/packages/da/9c/901d13b9d84262082e81d38879600dcec28beb994ae08d1a7cbab4dc3ece/lxml-4.2.5-cp37-cp37m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl",
-      "is-local": false
+    "lxml_4_3_3_cp37_cp37m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64": {
+      "is-local": false,
+      "sha256": "03984196d00670b2ab14ae0ea83d5cc0cfa4f5a42558afa9ab5fa745995328f5",
+      "url": "https://files.pythonhosted.org/packages/45/6c/436a534dca42f7982ba793983353035d117ab70541266704974efa323ade/lxml-4.3.3-cp37-cp37m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl"
     },
-    "lxml_4_2_5_cp27_cp27mu_manylinux1_x86_64": {
-      "url": "https://files.pythonhosted.org/packages/e5/14/f4343239f955442da9da1919a99f7311bc5627522741bada61b2349c8def/lxml-4.2.5-cp27-cp27mu-manylinux1_x86_64.whl",
-      "is-local": false
+    "mock_3_0_5_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "d157e52d4e5b938c550f39eb2fd15610db062441a9c2747d3dbfa9298211d0f8",
+      "url": "https://files.pythonhosted.org/packages/05/d2/f94e68be6b17f46d2c353564da56e6fb89ef09faeeff3313a046cb810ca9/mock-3.0.5-py2.py3-none-any.whl"
     },
-    "lxml_4_2_5_cp36_cp36m_manylinux1_x86_64": {
-      "url": "https://files.pythonhosted.org/packages/03/a4/9eea8035fc7c7670e5eab97f34ff2ef0ddd78a491bf96df5accedb0e63f5/lxml-4.2.5-cp36-cp36m-manylinux1_x86_64.whl",
-      "is-local": false
+    "more_itertools_5_0_0_py2_none_any": {
+      "is-local": false,
+      "sha256": "c0a5785b1109a6bd7fac76d6837fd1feca158e54e521ccd2ae8bfe393cc9d4fc",
+      "url": "https://files.pythonhosted.org/packages/2f/9d/dcfe59e213093695f108508af1214cf9cd95cc5489e46877ec5cb56369e5/more_itertools-5.0.0-py2-none-any.whl"
+    },
+    "more_itertools_7_0_0_py3_none_any": {
+      "is-local": false,
+      "sha256": "2112d2ca570bb7c3e53ea1a35cd5df42bb0fd10c45f0fb97178679c3c03d64c7",
+      "url": "https://files.pythonhosted.org/packages/b3/73/64fb5922b745fc1daee8a2880d907d2a70d9c7bb71eea86fcb9445daab5e/more_itertools-7.0.0-py3-none-any.whl"
+    },
+    "pathlib2_2_3_3_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "5887121d7f7df3603bca2f710e7219f3eca0eb69e0b7cc6e0a022e155ac931a7",
+      "url": "https://files.pythonhosted.org/packages/2a/46/c696dcf1c7aad917b39b875acdc5451975e3a9b4890dca8329983201c97a/pathlib2-2.3.3-py2.py3-none-any.whl"
+    },
+    "pluggy_0_11_0_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "964cedd2b27c492fbf0b7f58b3284a09cf7f99b0f715941fb24a439b3af1bd1a",
+      "url": "https://files.pythonhosted.org/packages/cc/e4/2003a5e4e445424602c8f06a436eeed9e78bcae4947128f64741c66c7216/pluggy-0.11.0-py2.py3-none-any.whl"
+    },
+    "py_1_8_0_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "64f65755aee5b381cea27766a3a147c3f15b9b6b9ac88676de66ba2ae36793fa",
+      "url": "https://files.pythonhosted.org/packages/76/bc/394ad449851729244a97857ee14d7cba61ddb268dce3db538ba2f2ba1f0f/py-1.8.0-py2.py3-none-any.whl"
+    },
+    "pyang_1_7_8_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "f04d9639193f87f5a929fe71bdc404b61383cf28dd15912da7a37a0ea607e335",
+      "url": "https://files.pythonhosted.org/packages/43/d3/0cc5538d83db3216f4c5acbfa5849a601dfe2e80e5fade872d5e6d5ee7d7/pyang-1.7.8-py2.py3-none-any.whl"
+    },
+    "pytest_4_4_1_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "3773f4c235918987d51daf1db66d51c99fac654c81d6f2f709a046ab446d5e5d",
+      "url": "https://files.pythonhosted.org/packages/5d/c3/54f607bc9817fd284073ac68e99123f86616f431f9d29a855474b7cf00eb/pytest-4.4.1-py2.py3-none-any.whl"
+    },
+    "pytest_mock_1_10_4_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "43ce4e9dd5074993e7c021bb1c22cbb5363e612a2b5a76bc6d956775b10758b7",
+      "url": "https://files.pythonhosted.org/packages/30/43/8deecb4c123bbc16d25666f1a6d241109c97aeb2e50806b952661c8e4b95/pytest_mock-1.10.4-py2.py3-none-any.whl"
+    },
+    "scandir_1_10_0_cp27_cp27m_macosx_10_13_x86_64": {
+      "is-local": true,
+      "url": "file:///Users/athompson/code/rules_pip/thirdparty/pip/wheels/scandir-1.10.0-cp27-cp27m-macosx_10_13_x86_64.whl"
+    },
+    "setuptools_41_0_1_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "c7769ce668c7a333d84e17fe8b524b1c45e7ee9f7908ad0a73e1eda7e6a5aebf",
+      "url": "https://files.pythonhosted.org/packages/ec/51/f45cea425fd5cb0b0380f5b0f048ebc1da5b417e48d304838c02d6288a1e/setuptools-41.0.1-py2.py3-none-any.whl"
+    },
+    "six_1_12_0_py2_py3_none_any": {
+      "is-local": false,
+      "sha256": "3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c",
+      "url": "https://files.pythonhosted.org/packages/73/fb/00a976f728d0d1fecfe898238ce23f502a721c0ac0ecfedb80e0d88c64e9/six-1.12.0-py2.py3-none-any.whl"
     }
   }
 }

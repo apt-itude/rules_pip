@@ -151,7 +151,6 @@ class Resolver(object):
 
     def _create_resolved_requirement(self, requirement):
         LOG.debug("Creating resolved requirement for %s", requirement.name)
-        LOG.debug("Markers: %s", requirement.markers)
         use_local_wheel_source = not requirement.link.is_wheel
 
         if use_local_wheel_source:

@@ -24,6 +24,7 @@ def _pip_lock(ctx):
         "@@REQUIREMENTS_LOCK_PATH@@": requirements_lock_path,
         "@@WHEEL_DIRECTORY@@": wheel_dir,
         "@@REQUIREMENTS_TXT_PATHS@@": req_files,
+        "@@WORKSPACE_NAME@@": ctx.workspace_name,
     }
 
     ctx.actions.expand_template(

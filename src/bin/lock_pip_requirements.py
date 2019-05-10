@@ -42,9 +42,10 @@ def main():
     lock_file.update_requirements_for_current_environment(resolved_requirements)
 
     # TODO raise error if wheel dir changes?
-    # Set this to the wheel dir relative to the WORKSPACE root so it doesn't include any
-    # parts of the path custom to the current environment
-    lock_file.wheel_directory = args.wheel_dir
+    lock_file.local_wheels_package = "@{workspace}//{package}".format(
+        workspace=args.workspace_name,
+        package=args.wheel_dir,
+    )
 
     if lock_file_path:
         lock_file.dump(lock_file_path)
@@ -75,6 +76,9 @@ def parse_args():
     parser.add_argument(
         "-w", "--wheel-dir",
         default="wheels",
+    )
+    parser.add_argument(
+        "workspace_name"
     )
     parser.add_argument(
         "requirements_files",

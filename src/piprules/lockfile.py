@@ -87,7 +87,7 @@ class LockFile(schematics.models.Model):
         schematics.types.ModelType(Source),
         default={},
     )
-    wheel_directory = schematics.types.StringType()
+    local_wheels_package = schematics.types.StringType()
 
     @classmethod
     def load(cls, path):

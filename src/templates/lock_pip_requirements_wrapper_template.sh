@@ -7,6 +7,7 @@ USE_PY3=@@USE_PY3@@
 REQUIREMENTS_LOCK_PATH="@@REQUIREMENTS_LOCK_PATH@@"
 WHEEL_DIRECTORY="@@WHEEL_DIRECTORY@@"
 REQUIREMENTS_TXT_PATHS="@@REQUIREMENTS_TXT_PATHS@@"
+WORKSPACE_NAME="@@WORKSPACE_NAME@@"
 
 echo "Compiling $REQUIREMENTS_LOCK_PATH"
 
@@ -15,6 +16,7 @@ if [ "$USE_PY2" = true ]; then
         --lock-file $REQUIREMENTS_LOCK_PATH \
         --wheel-dir $WHEEL_DIRECTORY \
         "$@" \
+        $WORKSPACE_NAME \
         $REQUIREMENTS_TXT_PATHS
 fi
 
@@ -23,5 +25,6 @@ if [ "$USE_PY3" = true ]; then
         --lock-file $REQUIREMENTS_LOCK_PATH \
         --wheel-dir $WHEEL_DIRECTORY \
         "$@" \
+        $WORKSPACE_NAME \
         $REQUIREMENTS_TXT_PATHS
 fi

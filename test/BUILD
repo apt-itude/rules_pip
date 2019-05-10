@@ -129,6 +129,23 @@ py_test(
 
 
 py_test(
+    name = "local_wheel_test_py2",
+    srcs = ["local_wheel_test.py"],
+    main = "local_wheel_test.py",
+    deps = ["@pip//:pyyaml"],
+    python_version = "PY2",
+)
+
+py_test(
+    name = "local_wheel_test_py3",
+    srcs = ["local_wheel_test.py"],
+    main = "local_wheel_test.py",
+    deps = ["@pip//:pyyaml"],
+    python_version = "PY3",
+)
+
+
+py_test(
     name = "multi_platform_multi_python_dep_test_py2",
     srcs = ["multi_platform_multi_python_dep_test.py"],
     main = "multi_platform_multi_python_dep_test.py",

@@ -67,3 +67,21 @@ remote_wheel = repository_rule(
         "sha256": attr.string(),
     }
 )
+
+
+def _local_wheel_impl(repo_ctx):
+    # Symlink to the wheel because the "extract" function doesn't know what to do with
+    # the .whl extension
+    repo_ctx.symlink(repo_ctx.attr.wheel, "wheel.zip")
+
+    repo_ctx.extract(archive = "wheel.zip")
+
+    _generate_wheel_build_file(repo_ctx)
+
+
+local_wheel = repository_rule(
+    implementation = _local_wheel_impl,
+    attrs = {
+        "wheel": attr.label(mandatory = True),
+    }
+)

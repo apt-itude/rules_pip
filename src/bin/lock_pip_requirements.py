@@ -47,6 +47,9 @@ def main():
         package=args.wheel_dir,
     )
 
+    if os.path.isdir(wheel_directory):
+        create_local_wheel_package_build_file(wheel_directory)
+
     if lock_file_path:
         lock_file.dump(lock_file_path)
     else:
@@ -92,6 +95,13 @@ def get_workspace_directory():
         return os.environ["BUILD_WORKSPACE_DIRECTORY"]
     except KeyError:
         sys.exit("This tool must by executed via 'bazel run'")
+
+
+def create_local_wheel_package_build_file(wheel_directory):
+    path = os.path.join(wheel_directory, "BUILD")
+
+    with open(path, mode="w") as build_file:
+        build_file.write('exports_files(["*"])\n')
 
 
 if __name__ == "__main__":

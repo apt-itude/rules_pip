@@ -42,9 +42,13 @@ class BzlFileGenerator(object):
     def sources(self):
         return self.lock_file["sources"]
 
+    @property
+    def local_wheels_package(self):
+        return self.lock_file["local_wheels_package"]
+
     def generate(self):
         return textwrap.dedent("""
-            load("@{rules_pip_repo}//rules:new_repository.bzl", "remote_wheel")
+            load("@{rules_pip_repo}//rules:new_repository.bzl", "local_wheel", "remote_wheel")
 
             {pip_install_macro}
         """).strip().format(
@@ -67,9 +71,12 @@ class BzlFileGenerator(object):
 
     def _generate_all_pip_repo_rules(self):
         for name, source in self.sources.items():
-            yield self._generate_pip_repo_rule_for_source(name, source)
+            if "url" in source:
+                yield self._generate_remote_wheel_rule(name, source)
+            else:
+                yield self._generate_local_wheel_rule(name, source)
 
-    def _generate_pip_repo_rule_for_source(self, name, source):
+    def _generate_remote_wheel_rule(self, name, source):
         return textwrap.dedent("""
             if not native.existing_rule("{name}"):
                 remote_wheel(
@@ -81,6 +88,19 @@ class BzlFileGenerator(object):
             name=name,
             url=source["url"],
             sha256=source.get("sha256", ""),
+        )
+
+    def _generate_local_wheel_rule(self, name, source):
+        return textwrap.dedent("""
+            if not native.existing_rule("{name}"):
+                local_wheel(
+                    name = "{name}",
+                    wheel = "{package}:{file}",
+                )
+        """).strip().format(
+            name=name,
+            package=self.local_wheels_package,
+            file=source["file"],
         )
 
 

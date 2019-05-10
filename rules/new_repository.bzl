@@ -46,7 +46,7 @@ pip_repositories = repository_rule(
 )
 
 
-def _pip_repository_impl(repo_ctx):
+def _remote_wheel_impl(repo_ctx):
     repo_ctx.download_and_extract(
         url = repo_ctx.attr.url,
         sha256 = repo_ctx.attr.sha256,
@@ -60,8 +60,8 @@ def _generate_wheel_build_file(repo_ctx):
     repo_ctx.file(repo_ctx.path("BUILD"), content = _WHEEL_BUILD_FILE_CONTENT)
 
 
-pip_repository = repository_rule(
-    implementation = _pip_repository_impl,
+remote_wheel = repository_rule(
+    implementation = _remote_wheel_impl,
     attrs = {
         "url": attr.string(mandatory = True),
         "sha256": attr.string(),

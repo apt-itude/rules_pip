@@ -44,7 +44,7 @@ class BzlFileGenerator(object):
 
     def generate(self):
         return textwrap.dedent("""
-            load("@{rules_pip_repo}//rules:new_repository.bzl", "pip_repository")
+            load("@{rules_pip_repo}//rules:new_repository.bzl", "remote_wheel")
 
             {pip_install_macro}
         """).strip().format(
@@ -72,7 +72,7 @@ class BzlFileGenerator(object):
     def _generate_pip_repo_rule_for_source(self, name, source):
         return textwrap.dedent("""
             if not native.existing_rule("{name}"):
-                pip_repository(
+                remote_wheel(
                     name = "{name}",
                     url = "{url}",
                     sha256 = "{sha256}",

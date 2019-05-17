@@ -264,6 +264,9 @@ def _convert_sys_platform_to_bazel(sys_platform):
     if sys_platform == "darwin":
         return "osx"
 
+    if "linux" in sys_platform:
+        return "linux"
+
     return sys_platform
 
 

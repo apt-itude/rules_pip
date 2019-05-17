@@ -8,4 +8,6 @@ build:newpy --incompatible_allow_python_version_transitions
 build:newpy --incompatible_remove_old_python_version_api
 build:newpy --python_top=//runtime:version-based
 
+test:newpy --test_tag_filters=new
+
 try-import %workspace%/user.bazelrc

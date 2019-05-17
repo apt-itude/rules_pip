@@ -50,8 +50,8 @@
         },
         "mock": {
           "dependencies": [
-            "six",
-            "funcsigs"
+            "funcsigs",
+            "six"
           ],
           "is-direct": false,
           "source": "mock_3_0_5_py2_py3_none_any",
@@ -67,8 +67,8 @@
         },
         "pathlib2": {
           "dependencies": [
-            "six",
-            "scandir"
+            "scandir",
+            "six"
           ],
           "is-direct": true,
           "source": "pathlib2_2_3_3_py2_py3_none_any",
@@ -96,15 +96,15 @@
         },
         "pytest": {
           "dependencies": [
-            "funcsigs",
-            "setuptools",
-            "py",
-            "pathlib2",
-            "six",
-            "attrs",
-            "more-itertools",
             "atomicwrites",
-            "pluggy"
+            "attrs",
+            "funcsigs",
+            "more-itertools",
+            "pathlib2",
+            "pluggy",
+            "py",
+            "setuptools",
+            "six"
           ],
           "is-direct": true,
           "source": "pytest_4_4_2_py2_py3_none_any",
@@ -112,8 +112,8 @@
         },
         "pytest-mock": {
           "dependencies": [
-            "pytest",
-            "mock"
+            "mock",
+            "pytest"
           ],
           "is-direct": true,
           "source": "pytest_mock_1_10_4_py2_py3_none_any",
@@ -202,12 +202,12 @@
         "pytest": {
           "dependencies": [
             "atomicwrites",
-            "more-itertools",
-            "py",
-            "pluggy",
             "attrs",
-            "six",
-            "setuptools"
+            "more-itertools",
+            "pluggy",
+            "py",
+            "setuptools",
+            "six"
           ],
           "is-direct": true,
           "source": "pytest_4_4_2_py2_py3_none_any",

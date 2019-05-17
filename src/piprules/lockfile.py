@@ -12,6 +12,13 @@ from piprules import util
 LOG = logging.getLogger(__name__)
 
 
+class _SortedListType(schematics.types.ListType):
+
+    def convert(self, value, context=None):
+        value = super(_SortedListType, self).convert(value, context=context)
+        return sorted(value)
+
+
 class Requirement(schematics.models.Model):
 
     version = schematics.types.StringType(required=True)
@@ -21,7 +28,7 @@ class Requirement(schematics.models.Model):
         deserialize_from=["is-direct"],
     )
     source = schematics.types.StringType(required=True)
-    dependencies = schematics.types.ListType(
+    dependencies = _SortedListType(
         schematics.types.StringType,
         default=[],
     )

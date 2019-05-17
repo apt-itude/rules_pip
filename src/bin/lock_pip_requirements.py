@@ -50,6 +50,8 @@ def main():
     if os.path.isdir(wheel_directory):
         create_local_wheel_package_build_file(wheel_directory)
 
+    purge_unused_local_wheels(lock_file, wheel_directory)
+
     if lock_file_path:
         lock_file.dump(lock_file_path)
     else:
@@ -102,6 +104,19 @@ def create_local_wheel_package_build_file(wheel_directory):
 
     with open(path, mode="w") as build_file:
         build_file.write('exports_files(["*"])\n')
+
+
+def purge_unused_local_wheels(lock_file, wheel_directory):
+    local_wheels = {
+        source.file
+        for source in lock_file.sources.values()
+        if source.file
+    }
+
+    for filename in os.listdir(wheel_directory):
+        if filename.endswith(".whl") and filename not in local_wheels:
+            LOG.info("Removing unused local wheel %s", filename)
+            os.remove(os.path.join(wheel_directory, filename))
 
 
 if __name__ == "__main__":

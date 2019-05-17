@@ -148,11 +148,26 @@ class LockFile(schematics.models.Model):
             ))
 
         self._get_or_create_current_environment().requirements = new_requirements
+        self._purge_unused_sources()
 
     def _get_or_create_current_environment(self):
         return self.environments.setdefault(
             _CURRENT_ENVIRONMENT.name,
             _CURRENT_ENVIRONMENT
+        )
+
+    def _purge_unused_sources(self):
+        self.sources = {
+            key: source
+            for key, source in self.sources.items()
+            if self._is_source_used(key)
+        }
+
+    def _is_source_used(self, source_key):
+        return any(
+            requirement.source == source_key
+            for environment in self.environments.values()
+            for requirement in environment.requirements.values()
         )
 
     def get_requirements_for_current_environment(self):

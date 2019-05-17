@@ -1,2 +1,2 @@
 #!/bin/sh
-exec $(command -v python3) "$@"
+exec $(command -v python3.6) "$@"

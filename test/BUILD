@@ -117,6 +117,7 @@ py_test(
     main = "conditional_dependencies_test.py",
     deps = ["@pip//:isort"],
     python_version = "PY2",
+    tags = ["new"],
 )
 
 py_test(
@@ -125,6 +126,7 @@ py_test(
     main = "conditional_dependencies_test.py",
     deps = ["@pip//:isort"],
     python_version = "PY3",
+    tags = ["new"],
 )
 
 
@@ -134,6 +136,7 @@ py_test(
     main = "local_wheel_test.py",
     deps = ["@pip//:pyyaml"],
     python_version = "PY2",
+    tags = ["new"],
 )
 
 py_test(
@@ -142,6 +145,7 @@ py_test(
     main = "local_wheel_test.py",
     deps = ["@pip//:pyyaml"],
     python_version = "PY3",
+    tags = ["new"],
 )
 
 
@@ -151,6 +155,7 @@ py_test(
     main = "multi_platform_multi_python_dep_test.py",
     deps = ["@pip//:lxml"],
     python_version = "PY2",
+    tags = ["new"],
 )
 
 py_test(
@@ -159,4 +164,5 @@ py_test(
     main = "multi_platform_multi_python_dep_test.py",
     deps = ["@pip//:lxml"],
     python_version = "PY3",
+    tags = ["new"],
 )

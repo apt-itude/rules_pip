@@ -1,24 +1,5 @@
+load("//rules:wheel.bzl", "remote_wheel")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-_WHEEL_BUILD_FILE_CONTENT = """
-py_library(
-    name = "lib",
-    srcs = glob(["**/*.py"]),
-    data = glob(
-        ["**/*"],
-        exclude = [
-            "**/*.py",
-            "**/* *",  # Bazel runfiles cannot have spaces in the name
-            "BUILD",
-            "WORKSPACE",
-            "*.whl.zip",
-        ],
-    ),
-    imports = ["."],
-    visibility = ["//visibility:public"],
-)
-"""
 
 def pip_rules_dependencies():
     _remote_wheel(
@@ -79,12 +60,10 @@ def pip_rules_dependencies():
 
 def _remote_wheel(name, url, sha256):
     _ensure_rule_exists(
-        http_archive,
+        remote_wheel,
         name = "pip_%s" % name,
         url = url,
         sha256 = sha256,
-        build_file_content = _WHEEL_BUILD_FILE_CONTENT,
-        type = "zip",
     )
 
 def _ensure_rule_exists(rule_type, name, **kwargs):

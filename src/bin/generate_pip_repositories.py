@@ -48,7 +48,7 @@ class BzlFileGenerator(object):
 
     def generate(self):
         return textwrap.dedent("""
-            load("@{rules_pip_repo}//rules:new_repository.bzl", "local_wheel", "remote_wheel")
+            load("@{rules_pip_repo}//rules:wheel.bzl", "local_wheel", "remote_wheel")
 
             {pip_install_macro}
         """).strip().format(

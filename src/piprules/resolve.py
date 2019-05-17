@@ -180,7 +180,7 @@ class Resolver(object):
 
     def _set_link_to_local_wheel(self, requirement):
         temp_wheel_path = _find_wheel(self._work_dirs.wheel, requirement.name)
-        wheel_path = _copy_file(temp_wheel_path, self._wheel_dir)
+        wheel_path = _copy_file_if_missing(temp_wheel_path, self._wheel_dir)
         url = pipcompat.path_to_url(wheel_path)
 
         LOG.debug("Setting source of %s to %s", requirement.name, url)
@@ -214,11 +214,17 @@ def _find_wheel(directory, name):
     raise RuntimeError('Could not find wheel matching name "{}"'.format(name))
 
 
-def _copy_file(source_path, directory):
-    util.ensure_directory_exists(directory)
+def _copy_file_if_missing(source_path, directory):
     base_name = os.path.basename(source_path)
     dest_path = os.path.join(directory, base_name)
+
+    if os.path.isfile(dest_path):
+        LOG.debug("Local wheel %s already exists", dest_path)
+        return dest_path
+
+    util.ensure_directory_exists(directory)
     shutil.copy(source_path, dest_path)
+
     return dest_path
 
 

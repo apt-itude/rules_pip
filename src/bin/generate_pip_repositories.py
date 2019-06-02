@@ -83,7 +83,7 @@ class BzlFileGenerator(object):
                     sha256 = "{sha256}",
                 )
         """).strip().format(
-            name=name,
+            name=get_source_repo_name(name),
             url=source["url"],
             sha256=source.get("sha256", ""),
         )
@@ -96,10 +96,14 @@ class BzlFileGenerator(object):
                     wheel = "{package}:{file}",
                 )
         """).strip().format(
-            name=name,
+            name=get_source_repo_name(name),
             package=self.local_wheels_package,
             file=source["file"],
         )
+
+
+def get_source_repo_name(source_name):
+    return "pip__{}".format(source_name)
 
 
 def indent_block(string, level):
@@ -278,7 +282,7 @@ def _make_platform_label(rules_pip_repo, platform):
 
 
 def _make_source_label(source_name):
-    return "@{}//:lib".format(source_name)
+    return "@{}//:lib".format(get_source_repo_name(source_name))
 
 
 def _make_package_label(name):

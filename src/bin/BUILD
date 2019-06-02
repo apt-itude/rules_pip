@@ -44,5 +44,3 @@ py_binary(
     python_version = "PY3",
     visibility = ["//visibility:public"],
 )
-
-exports_files(['generate_requirements_bzl.py'])

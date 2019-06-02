@@ -101,8 +101,8 @@ genrule(
 )
 
 pytest_test(
-    name = "data_test",
-    src = "data_test.py",
+    name = "old_data_test",
+    src = "old_data_test.py",
     data = [
         "ietf-yang-metadata.yin",
         ":test-yin-2",
@@ -163,6 +163,40 @@ py_test(
     srcs = ["multi_platform_multi_python_dep_test.py"],
     main = "multi_platform_multi_python_dep_test.py",
     deps = ["@pip//lxml"],
+    python_version = "PY3",
+    tags = ["new"],
+)
+
+genrule(
+    name = "pyang-main",
+    srcs = ["@pip__pyang_1_7_8_py2_py3_none_any//scripts:pyang"],
+    outs = ["pyang-main.py"],
+    cmd = "cp $< $@",
+)
+
+py_binary(
+    name = "pyang-exe",
+    srcs = [":pyang-main"],
+    main = "pyang-main.py",
+    deps = ["@pip//pyang"],
+    python_version = "PY2",
+)
+
+genrule(
+    name = "test-yin",
+    srcs = ["@pip__pyang_1_7_8_py2_py3_none_any//data/share/yang/modules/ietf:ietf-yang-metadata.yang"],
+    outs = ["ietf-yang-metadata-generated.yin"],
+    tools = [":pyang-exe"],
+    cmd = "$(location :pyang-exe) -f yin -o $@ $<",
+)
+
+py_test(
+    name = "data_test",
+    srcs = ["data_test.py"],
+    data = [
+        "ietf-yang-metadata.yin",
+        ":test-yin",
+    ],
     python_version = "PY3",
     tags = ["new"],
 )

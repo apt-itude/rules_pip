@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 import argparse
 import json
+import os
 import textwrap
 
 
@@ -8,21 +9,15 @@ def main():
     args = parse_args()
     lock_file = load_requirements(args.requirements_lock_file)
 
-    bzl_file_contents = BzlFileGenerator(lock_file, args.rules_pip_repo).generate()
-    write_file(args.bzl_file_path, bzl_file_contents)
-
-    build_file_contents = BuildFileGenerator(
-        lock_file,
-        args.rules_pip_repo
-    ).generate()
-    write_file(args.build_file_path, build_file_contents)
+    BzlFileGenerator(lock_file, args.rules_pip_repo).generate(args.bzl_file_path)
+    AliasPackageGenerator(lock_file, args.rules_pip_repo).generate(args.repository_dir)
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("requirements_lock_file")
     parser.add_argument("bzl_file_path")
-    parser.add_argument("build_file_path")
+    parser.add_argument("repository_dir")
     parser.add_argument("rules_pip_repo")
     return parser.parse_args()
 
@@ -46,7 +41,10 @@ class BzlFileGenerator(object):
     def local_wheels_package(self):
         return self.lock_file["local_wheels_package"]
 
-    def generate(self):
+    def generate(self, path):
+        write_file(path, self._generate_content())
+
+    def _generate_content(self):
         return textwrap.dedent("""
             load("@{rules_pip_repo}//rules:wheel.bzl", "local_wheel", "remote_wheel")
 
@@ -113,7 +111,7 @@ def indent_line(line, level):
     return "{}{}".format((level * 4 * " "), line)
 
 
-class BuildFileGenerator(object):
+class AliasPackageGenerator(object):
 
     def __init__(self, lock_file, rules_pip_repo):
         self.lock_file = lock_file
@@ -123,24 +121,15 @@ class BuildFileGenerator(object):
     def environments(self):
         return self.lock_file["environments"]
 
-    def generate(self):
-        return textwrap.dedent("""
-            package(default_visibility = ["//visibility:public"])
-
-            {aliases}
-        """).strip().format(
-            aliases=self._generate_aliases()
-        )
-
-    def _generate_aliases(self):
-        return "\n".join(self._generate_all_rules())
-
-    def _generate_all_rules(self):
+    def generate(self, repository_dir):
         requirement_tree = self._build_requirement_tree()
 
         for name, python_subtree in requirement_tree.items():
-            for rule in self._generate_rules_for_requirement(name, python_subtree):
-                yield rule
+            self._generate_package_for_requirement(
+                repository_dir,
+                name,
+                python_subtree,
+            )
 
     def _build_requirement_tree(self):
         tree = {}
@@ -151,13 +140,42 @@ class BuildFileGenerator(object):
             requirements = environment_details["requirements"]
 
             for requirement_name, requirement_details in requirements.items():
+                normalized_name = _normalize_distribution_name(requirement_name)
+
                 tree.setdefault(
-                    requirement_name, {}
+                    normalized_name, {}
                 ).setdefault(
                     python_version, {}
                 )[sys_platform] = requirement_details
 
         return tree
+
+    def _generate_package_for_requirement(
+        self,
+        repository_dir,
+        requirement_name,
+        python_subtree,
+    ):
+        package_dir = os.path.join(repository_dir, requirement_name)
+        os.makedirs(package_dir)
+
+        build_file_path = os.path.join(package_dir, "BUILD")
+        build_rules = self._generate_rules_for_requirement(
+            requirement_name,
+            python_subtree,
+        )
+        build_file_content = self._generate_build_file_content(build_rules)
+
+        write_file(build_file_path, build_file_content)
+
+    def _generate_build_file_content(self, build_rules):
+        return textwrap.dedent("""
+            package(default_visibility = ["//visibility:public"])
+
+            {rules}
+        """).strip().format(
+            rules="\n".join(build_rules),
+        )
 
     def _generate_rules_for_requirement(self, requirement_name, python_subtree):
         top_alias = SelectAlias(requirement_name)
@@ -192,7 +210,6 @@ class BuildFileGenerator(object):
         sys_platform,
     ):
         name = _make_environment_specific_alias(
-            requirement_name,
             python_version,
             sys_platform,
         )
@@ -211,7 +228,8 @@ class BuildFileGenerator(object):
     def _generate_dependency_labels(self, requirement_details):
         yield _make_source_label(requirement_details["source"])
         for dep in requirement_details["dependencies"]:
-            yield str(dep)
+            dep_name = _normalize_distribution_name(dep)
+            yield _make_package_label(dep_name)
 
     def _generate_python_version_alias(
         self,
@@ -220,7 +238,7 @@ class BuildFileGenerator(object):
         platform_subtree,
     ):
         alias = SelectAlias(
-            _make_python_specific_alias(requirement_name, python_version)
+            _make_python_specific_alias(python_version)
         )
 
         for sys_platform in platform_subtree:
@@ -229,7 +247,6 @@ class BuildFileGenerator(object):
             platform_label = _make_platform_label(self.rules_pip_repo, bazel_platform)
 
             alias.actual[platform_label] = _make_environment_specific_alias(
-                requirement_name,
                 python_version,
                 sys_platform,
             )
@@ -237,12 +254,16 @@ class BuildFileGenerator(object):
         return alias
 
 
-def _make_python_specific_alias(requirement_name, python_version):
-    return "{}__py{}".format(requirement_name, python_version)
+def _normalize_distribution_name(name):
+    return name.lower().replace("-", "_")
 
 
-def _make_environment_specific_alias(requirement_name, python_version, sys_platform):
-    return "{}__py{}_{}".format(requirement_name, python_version, sys_platform)
+def _make_python_specific_alias(python_version):
+    return "py{}".format(python_version)
+
+
+def _make_environment_specific_alias(python_version, sys_platform):
+    return "py{}_{}".format(python_version, sys_platform)
 
 
 def _make_python_version_label(version):
@@ -258,6 +279,10 @@ def _make_platform_label(rules_pip_repo, platform):
 
 def _make_source_label(source_name):
     return "@{}//:lib".format(source_name)
+
+
+def _make_package_label(name):
+    return "//{}".format(name)
 
 
 def _convert_sys_platform_to_bazel(sys_platform):

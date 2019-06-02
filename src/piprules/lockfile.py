@@ -22,11 +22,7 @@ class _SortedListType(schematics.types.ListType):
 class Requirement(schematics.models.Model):
 
     version = schematics.types.StringType(required=True)
-    is_direct = schematics.types.BooleanType(
-        required=True,
-        serialized_name="is-direct",
-        deserialize_from=["is-direct"],
-    )
+    is_direct = schematics.types.BooleanType(required=True)
     source = schematics.types.StringType(required=True)
     dependencies = _SortedListType(
         schematics.types.StringType,

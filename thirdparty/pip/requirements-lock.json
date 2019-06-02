@@ -5,31 +5,31 @@
       "requirements": {
         "atomicwrites": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "atomicwrites_1_3_0_py2_py3_none_any",
           "version": "1.3.0"
         },
         "attrs": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "attrs_19_1_0_py2_py3_none_any",
           "version": "19.1.0"
         },
         "backports-functools-lru-cache": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "backports_functools_lru_cache_1_5_py2_py3_none_any",
           "version": "1.5"
         },
         "funcsigs": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "funcsigs_1_0_2_py2_py3_none_any",
           "version": "1.0.2"
         },
         "futures": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "futures_3_2_0_py2_none_any",
           "version": "3.2.0"
         },
@@ -38,13 +38,13 @@
             "backports-functools-lru-cache",
             "futures"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "isort_4_3_20_py2_py3_none_any",
           "version": "4.3.20"
         },
         "lxml": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "lxml_4_3_3_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
           "version": "4.3.3"
         },
@@ -53,7 +53,7 @@
             "funcsigs",
             "six"
           ],
-          "is-direct": false,
+          "is_direct": false,
           "source": "mock_3_0_5_py2_py3_none_any",
           "version": "3.0.5"
         },
@@ -61,7 +61,7 @@
           "dependencies": [
             "six"
           ],
-          "is-direct": false,
+          "is_direct": false,
           "source": "more_itertools_5_0_0_py2_none_any",
           "version": "5.0.0"
         },
@@ -70,19 +70,19 @@
             "scandir",
             "six"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pathlib2_2_3_3_py2_py3_none_any",
           "version": "2.3.3"
         },
         "pluggy": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "pluggy_0_11_0_py2_py3_none_any",
           "version": "0.11.0"
         },
         "py": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "py_1_8_0_py2_py3_none_any",
           "version": "1.8.0"
         },
@@ -90,7 +90,7 @@
           "dependencies": [
             "lxml"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pyang_1_7_8_py2_py3_none_any",
           "version": "1.7.8"
         },
@@ -107,7 +107,7 @@
             "six",
             "wcwidth"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pytest_4_5_0_py2_py3_none_any",
           "version": "4.5.0"
         },
@@ -116,37 +116,37 @@
             "mock",
             "pytest"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pytest_mock_1_10_4_py2_py3_none_any",
           "version": "1.10.4"
         },
         "pyyaml": {
           "dependencies": [],
-          "is-direct": true,
+          "is_direct": true,
           "source": "PyYAML_5_1_cp27_cp27m_macosx_10_13_x86_64",
           "version": "5.1"
         },
         "scandir": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "scandir_1_10_0_cp27_cp27m_macosx_10_13_x86_64",
           "version": "1.10.0"
         },
         "setuptools": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "setuptools_41_0_1_py2_py3_none_any",
           "version": "41.0.1"
         },
         "six": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "six_1_12_0_py2_py3_none_any",
           "version": "1.12.0"
         },
         "wcwidth": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "wcwidth_0_1_7_py2_py3_none_any",
           "version": "0.1.7"
         }
@@ -158,43 +158,43 @@
       "requirements": {
         "atomicwrites": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "atomicwrites_1_3_0_py2_py3_none_any",
           "version": "1.3.0"
         },
         "attrs": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "attrs_19_1_0_py2_py3_none_any",
           "version": "19.1.0"
         },
         "isort": {
           "dependencies": [],
-          "is-direct": true,
+          "is_direct": true,
           "source": "isort_4_3_20_py2_py3_none_any",
           "version": "4.3.20"
         },
         "lxml": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "lxml_4_3_3_cp36_cp36m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
           "version": "4.3.3"
         },
         "more-itertools": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "more_itertools_7_0_0_py3_none_any",
           "version": "7.0.0"
         },
         "pluggy": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "pluggy_0_11_0_py2_py3_none_any",
           "version": "0.11.0"
         },
         "py": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "py_1_8_0_py2_py3_none_any",
           "version": "1.8.0"
         },
@@ -202,7 +202,7 @@
           "dependencies": [
             "lxml"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pyang_1_7_8_py2_py3_none_any",
           "version": "1.7.8"
         },
@@ -217,7 +217,7 @@
             "six",
             "wcwidth"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pytest_4_5_0_py2_py3_none_any",
           "version": "4.5.0"
         },
@@ -225,31 +225,31 @@
           "dependencies": [
             "pytest"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pytest_mock_1_10_4_py2_py3_none_any",
           "version": "1.10.4"
         },
         "pyyaml": {
           "dependencies": [],
-          "is-direct": true,
+          "is_direct": true,
           "source": "PyYAML_5_1_cp36_cp36m_macosx_10_13_x86_64",
           "version": "5.1"
         },
         "setuptools": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "setuptools_41_0_1_py2_py3_none_any",
           "version": "41.0.1"
         },
         "six": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "six_1_12_0_py2_py3_none_any",
           "version": "1.12.0"
         },
         "wcwidth": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "wcwidth_0_1_7_py2_py3_none_any",
           "version": "0.1.7"
         }
@@ -261,31 +261,31 @@
       "requirements": {
         "atomicwrites": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "atomicwrites_1_3_0_py2_py3_none_any",
           "version": "1.3.0"
         },
         "attrs": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "attrs_19_1_0_py2_py3_none_any",
           "version": "19.1.0"
         },
         "backports-functools-lru-cache": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "backports_functools_lru_cache_1_5_py2_py3_none_any",
           "version": "1.5"
         },
         "funcsigs": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "funcsigs_1_0_2_py2_py3_none_any",
           "version": "1.0.2"
         },
         "futures": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "futures_3_2_0_py2_none_any",
           "version": "3.2.0"
         },
@@ -294,13 +294,13 @@
             "backports-functools-lru-cache",
             "futures"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "isort_4_3_20_py2_py3_none_any",
           "version": "4.3.20"
         },
         "lxml": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "lxml_4_3_3_cp27_cp27mu_manylinux1_x86_64",
           "version": "4.3.3"
         },
@@ -309,7 +309,7 @@
             "funcsigs",
             "six"
           ],
-          "is-direct": false,
+          "is_direct": false,
           "source": "mock_3_0_5_py2_py3_none_any",
           "version": "3.0.5"
         },
@@ -317,7 +317,7 @@
           "dependencies": [
             "six"
           ],
-          "is-direct": false,
+          "is_direct": false,
           "source": "more_itertools_5_0_0_py2_none_any",
           "version": "5.0.0"
         },
@@ -326,19 +326,19 @@
             "scandir",
             "six"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pathlib2_2_3_3_py2_py3_none_any",
           "version": "2.3.3"
         },
         "pluggy": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "pluggy_0_11_0_py2_py3_none_any",
           "version": "0.11.0"
         },
         "py": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "py_1_8_0_py2_py3_none_any",
           "version": "1.8.0"
         },
@@ -346,7 +346,7 @@
           "dependencies": [
             "lxml"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pyang_1_7_8_py2_py3_none_any",
           "version": "1.7.8"
         },
@@ -363,7 +363,7 @@
             "six",
             "wcwidth"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pytest_4_5_0_py2_py3_none_any",
           "version": "4.5.0"
         },
@@ -372,37 +372,37 @@
             "mock",
             "pytest"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pytest_mock_1_10_4_py2_py3_none_any",
           "version": "1.10.4"
         },
         "pyyaml": {
           "dependencies": [],
-          "is-direct": true,
+          "is_direct": true,
           "source": "PyYAML_5_1_cp27_cp27mu_linux_x86_64",
           "version": "5.1"
         },
         "scandir": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "scandir_1_10_0_cp27_cp27mu_linux_x86_64",
           "version": "1.10.0"
         },
         "setuptools": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "setuptools_41_0_1_py2_py3_none_any",
           "version": "41.0.1"
         },
         "six": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "six_1_12_0_py2_py3_none_any",
           "version": "1.12.0"
         },
         "wcwidth": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "wcwidth_0_1_7_py2_py3_none_any",
           "version": "0.1.7"
         }
@@ -414,43 +414,43 @@
       "requirements": {
         "atomicwrites": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "atomicwrites_1_3_0_py2_py3_none_any",
           "version": "1.3.0"
         },
         "attrs": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "attrs_19_1_0_py2_py3_none_any",
           "version": "19.1.0"
         },
         "isort": {
           "dependencies": [],
-          "is-direct": true,
+          "is_direct": true,
           "source": "isort_4_3_20_py2_py3_none_any",
           "version": "4.3.20"
         },
         "lxml": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "lxml_4_3_3_cp36_cp36m_manylinux1_x86_64",
           "version": "4.3.3"
         },
         "more-itertools": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "more_itertools_7_0_0_py3_none_any",
           "version": "7.0.0"
         },
         "pluggy": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "pluggy_0_11_0_py2_py3_none_any",
           "version": "0.11.0"
         },
         "py": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "py_1_8_0_py2_py3_none_any",
           "version": "1.8.0"
         },
@@ -458,7 +458,7 @@
           "dependencies": [
             "lxml"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pyang_1_7_8_py2_py3_none_any",
           "version": "1.7.8"
         },
@@ -473,7 +473,7 @@
             "six",
             "wcwidth"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pytest_4_5_0_py2_py3_none_any",
           "version": "4.5.0"
         },
@@ -481,31 +481,31 @@
           "dependencies": [
             "pytest"
           ],
-          "is-direct": true,
+          "is_direct": true,
           "source": "pytest_mock_1_10_4_py2_py3_none_any",
           "version": "1.10.4"
         },
         "pyyaml": {
           "dependencies": [],
-          "is-direct": true,
+          "is_direct": true,
           "source": "PyYAML_5_1_cp36_cp36m_linux_x86_64",
           "version": "5.1"
         },
         "setuptools": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "setuptools_41_0_1_py2_py3_none_any",
           "version": "41.0.1"
         },
         "six": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "six_1_12_0_py2_py3_none_any",
           "version": "1.12.0"
         },
         "wcwidth": {
           "dependencies": [],
-          "is-direct": false,
+          "is_direct": false,
           "source": "wcwidth_0_1_7_py2_py3_none_any",
           "version": "0.1.7"
         }

@@ -151,10 +151,6 @@ class Resolver(object):
 
     def _create_resolved_requirement(self, requirement):
         LOG.debug("Creating resolved requirement for %s", requirement.name)
-        use_local_wheel_source = not requirement.link.is_wheel
-
-        if use_local_wheel_source:
-            self._set_link_to_local_wheel(requirement)
 
         abstract_dist = pipcompat.make_abstract_dist(requirement)
         dist = abstract_dist.dist()
@@ -163,6 +159,12 @@ class Resolver(object):
             pipcompat.canonicalize_name(dep.name)
             for dep in dist.requires()
         ]
+        version = dist.version
+
+        use_local_wheel_source = not requirement.link.is_wheel
+
+        if use_local_wheel_source:
+            self._set_link_to_local_wheel(requirement)
 
         link = requirement.link
         source = ResolvedRequirementSource(link.url_without_fragment)
@@ -172,7 +174,7 @@ class Resolver(object):
 
         return ResolvedRequirement(
             pipcompat.canonicalize_name(requirement.name),
-            dist.version,
+            version,
             source,
             is_direct=requirement.is_direct,
             dependencies=dependencies,

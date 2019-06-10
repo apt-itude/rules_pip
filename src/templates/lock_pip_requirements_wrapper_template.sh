@@ -17,8 +17,8 @@ if [ "$USE_PY2" = true ]; then
         --lock-file $REQUIREMENTS_LOCK_PATH \
         --wheel-dir $WHEEL_DIRECTORY \
         --index-url $INDEX_URL \
+        --workspace-name $WORKSPACE_NAME \
         "$@" \
-        $WORKSPACE_NAME \
         $REQUIREMENTS_TXT_PATHS
 fi
 
@@ -27,7 +27,7 @@ if [ "$USE_PY3" = true ]; then
         --lock-file $REQUIREMENTS_LOCK_PATH \
         --wheel-dir $WHEEL_DIRECTORY \
         --index-url $INDEX_URL \
+        --workspace-name $WORKSPACE_NAME \
         "$@" \
-        $WORKSPACE_NAME \
         $REQUIREMENTS_TXT_PATHS
 fi

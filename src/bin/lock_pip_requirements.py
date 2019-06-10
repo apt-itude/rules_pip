@@ -83,7 +83,8 @@ def parse_args():
         default="wheels",
     )
     parser.add_argument(
-        "workspace_name"
+        "-W", "--workspace-name",
+        required=True,
     )
     parser.add_argument(
         "requirements_files",

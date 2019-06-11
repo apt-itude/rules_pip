@@ -64,11 +64,11 @@ pip_repository(
 
 # New stuff
 
-load("//rules:new_repository.bzl", "pip_repositories")
+load("//rules:new_repository.bzl", new_pip_repository = "pip_repository")
 
-pip_repositories(
+new_pip_repository(
     name = "pip",
-    requirements = "//thirdparty/pip:requirements-lock.json"
+    requirements = "//thirdparty/pip:requirements-lock.json",
 )
 
 load("@pip//:requirements.bzl", "pip_install")

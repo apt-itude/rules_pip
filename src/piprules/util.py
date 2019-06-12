@@ -1,5 +1,6 @@
-import errno
 import contextlib
+import errno
+import hashlib
 import itertools
 import os
 
@@ -42,3 +43,16 @@ def prepend_to_pythonpath(paths):
 def full_groupby(iterable, key=None):
     """Like itertools.groupby(), but sorts the input on the group key first."""
     return itertools.groupby(sorted(iterable, key=key), key=key)
+
+
+def compute_file_hash(path, algorithm="sha256"):
+    hasher = hashlib.new(algorithm)
+    block_size = 4096
+
+    with open(path, mode='rb') as file_:
+        buf = file_.read(block_size)
+        while buf:
+            hasher.update(buf)
+            buf = file_.read(block_size)
+
+    return hasher.hexdigest()

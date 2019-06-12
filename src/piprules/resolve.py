@@ -168,9 +168,12 @@ class Resolver(object):
 
         link = requirement.link
         source = ResolvedRequirementSource(link.url_without_fragment)
-        if link.hash:
-            # TODO this assumes the hash is sha256
-            source.sha256 = link.hash
+
+        source.sha256 = (
+            link.hash
+            if link.hash and link.hash_name == "sha256"
+            else self._compute_sha256_sum(requirement)
+        )
 
         return ResolvedRequirement(
             pipcompat.canonicalize_name(requirement.name),
@@ -198,6 +201,11 @@ class Resolver(object):
             False,
             session=self._session,
         )
+
+    def _compute_sha256_sum(self, requirement):
+        LOG.debug(f"Computing sha256 sum for {requirement.name}")
+        temp_wheel_path = _find_wheel(self._work_dirs.wheel, requirement.name)
+        return util.compute_file_hash(temp_wheel_path)
 
 
 def _find_wheel(directory, name):

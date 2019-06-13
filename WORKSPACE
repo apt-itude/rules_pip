@@ -40,7 +40,7 @@ buildifier_dependencies()
 
 # PIP repositories
 
-load("//rules:new_repository.bzl", "pip_repository")
+load("//rules:repository.bzl", "pip_repository")
 
 pip_repository(
     name = "pip",

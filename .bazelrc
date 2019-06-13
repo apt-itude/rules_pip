@@ -1,13 +1,10 @@
-run --python_top=//runtime:dynamic
-test --python_top=//runtime:dynamic --build_tests_only
-
 # Control progress output when invoked by Travis
 build:travis --noshow_progress --show_task_finish --action_env=PATH --action_env=PYENV_VERSION=3.6.3:2.7.14 --nodistinct_host_configuration
 
-build:newpy --incompatible_allow_python_version_transitions
-build:newpy --incompatible_remove_old_python_version_api
-build:newpy --python_top=//runtime:version-based
-
-test:newpy --test_tag_filters=new
+build --incompatible_use_python_toolchains
+build --incompatible_allow_python_version_transitions
+build --incompatible_remove_old_python_version_api
+build --incompatible_py3_is_default
+build --incompatible_py2_outputs_are_suffixed
 
 try-import %workspace%/user.bazelrc

@@ -2,7 +2,6 @@ workspace(name = "com_apt_itude_rules_pip")
 
 # Dependencies for this repository
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//rules:dependencies.bzl", "pip_rules_dependencies")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
@@ -41,32 +40,9 @@ buildifier_dependencies()
 
 # PIP repositories
 
-load("//rules:repository.bzl", "pip_repository")
-load("//:python.bzl", "PYTHON2", "PYTHON3")
+load("//rules:new_repository.bzl", "pip_repository")
 
 pip_repository(
-    name = "pip2",
-    python_interpreter = PYTHON2,
-    requirements_per_platform = {
-        "//thirdparty/pip/2:requirements-linux.txt": "linux",
-        "//thirdparty/pip/2:requirements-osx.txt": "osx",
-    },
-)
-
-pip_repository(
-    name = "pip3",
-    python_interpreter = PYTHON3,
-    requirements_per_platform = {
-        "//thirdparty/pip/3:requirements-linux.txt": "linux",
-        "//thirdparty/pip/3:requirements-osx.txt": "osx",
-    },
-)
-
-# New stuff
-
-load("//rules:new_repository.bzl", new_pip_repository = "pip_repository")
-
-new_pip_repository(
     name = "pip",
     requirements = "//thirdparty/pip:requirements-lock.json",
 )

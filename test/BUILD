@@ -2,47 +2,6 @@ load("//:python.bzl", "PYTHON2", "PYTHON3")
 load("//tools/pytest:rules.bzl", "pytest_test")
 
 pytest_test(
-    name = "dependency_deduplication_test_2",
-    src = "dependency_deduplication_test.py",
-    deps = ["@pip2//isort"],
-    python_version = 2,
-)
-
-pytest_test(
-    name = "dependency_deduplication_test_3",
-    src = "dependency_deduplication_test.py",
-    deps = ["@pip3//isort"],
-    python_version = 3,
-)
-
-pytest_test(
-    name = "mock_test_2",
-    src = "mock_test.py",
-    deps = ["@pip2//pytest_mock"],
-    python_version = 2,
-)
-
-pytest_test(
-    name = "mock_test_3",
-    src = "mock_test.py",
-    deps = ["@pip3//pytest_mock"],
-    python_version = 3,
-)
-
-pytest_test(
-    name = "pathlib_test_2",
-    src = "pathlib_test.py",
-    deps = ["@pip2//pathlib2"],
-    python_version = 2,
-)
-
-pytest_test(
-    name = "pathlib_test_3",
-    src = "pathlib_test.py",
-    python_version = 3,
-)
-
-pytest_test(
     name = "pyyaml_test_2",
     src = "pyyaml_test.py",
     deps = ["@pip2//pyyaml"],
@@ -115,7 +74,10 @@ py_test(
     name = "conditional_dependencies_test_py2",
     srcs = ["conditional_dependencies_test.py"],
     main = "conditional_dependencies_test.py",
-    deps = ["@pip//isort"],
+    deps = [
+        "@pip//isort",
+        "@pip//pathlib2",
+    ],
     python_version = "PY2",
     tags = ["new"],
 )

@@ -1,5 +1,4 @@
 load("//:python.bzl", "PYTHON2", "PYTHON3")
-load("//tools/pytest:rules.bzl", "pytest_test")
 
 py_test(
     name = "conditional_dependencies_test_py2",

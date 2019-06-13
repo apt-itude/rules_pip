@@ -141,6 +141,7 @@ class AliasPackageGenerator(object):
         for environment_name, environment_details in self.environments.items():
             python_version = environment_details["python_version"]
             sys_platform = environment_details["sys_platform"]
+            bazel_platform = _convert_sys_platform_to_bazel(sys_platform)
             requirements = environment_details["requirements"]
 
             for requirement_name, requirement_details in requirements.items():
@@ -150,7 +151,7 @@ class AliasPackageGenerator(object):
                     normalized_name, {}
                 ).setdefault(
                     python_version, {}
-                )[sys_platform] = requirement_details
+                )[bazel_platform] = requirement_details
 
         return tree
 
@@ -172,6 +173,14 @@ class AliasPackageGenerator(object):
 
         write_file(build_file_path, build_file_content)
 
+        repos_file_path = os.path.join(package_dir, "repos.bzl")
+        repos_file_content = self._generate_repos_file_content(
+            requirement_name,
+            python_subtree,
+        )
+
+        write_file(repos_file_path, repos_file_content)
+
     def _generate_build_file_content(self, build_rules):
         return textwrap.dedent("""
             package(default_visibility = ["//visibility:public"])
@@ -185,12 +194,12 @@ class AliasPackageGenerator(object):
         top_alias = SelectAlias(requirement_name)
 
         for python_version, platform_subtree in python_subtree.items():
-            for sys_platform, requirement_details in platform_subtree.items():
+            for platform, requirement_details in platform_subtree.items():
                 yield self._generate_py_library(
                     requirement_name,
                     requirement_details,
                     python_version,
-                    sys_platform,
+                    platform,
                 )
 
             version_alias = self._generate_python_version_alias(
@@ -211,11 +220,11 @@ class AliasPackageGenerator(object):
         requirement_name,
         requirement_details,
         python_version,
-        sys_platform,
+        platform,
     ):
         name = _make_environment_specific_alias(
             python_version,
-            sys_platform,
+            platform,
         )
         deps = list(self._generate_dependency_labels(requirement_details))
 
@@ -230,7 +239,7 @@ class AliasPackageGenerator(object):
         )
 
     def _generate_dependency_labels(self, requirement_details):
-        yield _make_source_label(requirement_details["source"])
+        yield _make_source_lib_label(requirement_details["source"])
         for dep in requirement_details["dependencies"]:
             dep_name = _normalize_distribution_name(dep)
             yield _make_package_label(dep_name)
@@ -245,17 +254,43 @@ class AliasPackageGenerator(object):
             _make_python_specific_alias(python_version)
         )
 
-        for sys_platform in platform_subtree:
-            bazel_platform = _convert_sys_platform_to_bazel(sys_platform)
+        for platform in platform_subtree:
+            bazel_platform = _convert_sys_platform_to_bazel(platform)
 
             platform_label = _make_platform_label(self.rules_pip_repo, bazel_platform)
 
             alias.actual[platform_label] = _make_environment_specific_alias(
                 python_version,
-                sys_platform,
+                platform,
             )
 
         return alias
+
+    def _generate_repos_file_content(self, requirement_name, python_subtree):
+        return "\n\n".join(self._generate_repo_variables(python_subtree))
+
+    def _generate_repo_variables(self, python_subtree):
+        all_seen = set()
+
+        for python_version, platform_subtree in python_subtree.items():
+            seen_for_python_version = set()
+
+            for platform, requirement_details in platform_subtree.items():
+                name = _make_environment_specific_alias(python_version, platform)
+                repo_label = _make_source_repo_label(requirement_details["source"])
+
+                yield _make_variable_definition(name, repo_label)
+
+                seen_for_python_version.add(repo_label)
+
+            if len(seen_for_python_version) == 1:
+                name = _make_python_specific_alias(python_version)
+                yield _make_variable_definition(name, list(seen_for_python_version)[0])
+
+            all_seen.update(seen_for_python_version)
+
+        if len(all_seen) == 1:
+            yield _make_variable_definition("all", list(all_seen)[0])
 
 
 def _normalize_distribution_name(name):
@@ -266,8 +301,8 @@ def _make_python_specific_alias(python_version):
     return "py{}".format(python_version)
 
 
-def _make_environment_specific_alias(python_version, sys_platform):
-    return "py{}_{}".format(python_version, sys_platform)
+def _make_environment_specific_alias(python_version, platform):
+    return "py{}_{}".format(python_version, platform)
 
 
 def _make_python_version_label(version):
@@ -281,12 +316,20 @@ def _make_platform_label(rules_pip_repo, platform):
     )
 
 
-def _make_source_label(source_name):
-    return "@{}//:lib".format(get_source_repo_name(source_name))
+def _make_source_lib_label(source_name):
+    return "{}//:lib".format(_make_source_repo_label(source_name))
+
+
+def _make_source_repo_label(source_name):
+    return "@{}".format(get_source_repo_name(source_name))
 
 
 def _make_package_label(name):
     return "//{}".format(name)
+
+
+def _make_variable_definition(name, value):
+    return '{} = "{}"'.format(name, value)
 
 
 def _convert_sys_platform_to_bazel(sys_platform):

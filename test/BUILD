@@ -1,3 +1,5 @@
+load("@pip//pyang:repos.bzl", pyang_repo = "all")
+
 py_test(
     name = "conditional_dependencies_test_py2",
     srcs = ["conditional_dependencies_test.py"],
@@ -59,7 +61,7 @@ py_test(
 
 genrule(
     name = "pyang-main",
-    srcs = ["@pip__pyang_1_7_8_py2_py3_none_any//scripts:pyang"],
+    srcs = [pyang_repo + "//scripts:pyang"],
     outs = ["pyang-main.py"],
     cmd = "cp $< $@",
 )
@@ -74,7 +76,7 @@ py_binary(
 
 genrule(
     name = "test-yin",
-    srcs = ["@pip__pyang_1_7_8_py2_py3_none_any//data/share/yang/modules/ietf:ietf-yang-metadata.yang"],
+    srcs = [pyang_repo + "//data/share/yang/modules/ietf:ietf-yang-metadata.yang"],
     outs = ["ietf-yang-metadata-generated.yin"],
     tools = [":pyang-exe"],
     cmd = "$(location :pyang-exe) -f yin -o $@ $<",

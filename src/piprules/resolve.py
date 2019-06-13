@@ -203,7 +203,7 @@ class Resolver(object):
         )
 
     def _compute_sha256_sum(self, requirement):
-        LOG.debug(f"Computing sha256 sum for {requirement.name}")
+        LOG.debug("Computing sha256 sum for %s", requirement.name)
         temp_wheel_path = _find_wheel(self._work_dirs.wheel, requirement.name)
         return util.compute_file_hash(temp_wheel_path)
 

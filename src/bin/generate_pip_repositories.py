@@ -174,10 +174,7 @@ class AliasPackageGenerator(object):
         write_file(build_file_path, build_file_content)
 
         repos_file_path = os.path.join(package_dir, "repos.bzl")
-        repos_file_content = self._generate_repos_file_content(
-            requirement_name,
-            python_subtree,
-        )
+        repos_file_content = self._generate_repos_file_content(python_subtree)
 
         write_file(repos_file_path, repos_file_content)
 
@@ -196,14 +193,12 @@ class AliasPackageGenerator(object):
         for python_version, platform_subtree in python_subtree.items():
             for platform, requirement_details in platform_subtree.items():
                 yield self._generate_py_library(
-                    requirement_name,
                     requirement_details,
                     python_version,
                     platform,
                 )
 
             version_alias = self._generate_python_version_alias(
-                requirement_name,
                 python_version,
                 platform_subtree,
             )
@@ -215,13 +210,7 @@ class AliasPackageGenerator(object):
 
         yield str(top_alias)
 
-    def _generate_py_library(
-        self,
-        requirement_name,
-        requirement_details,
-        python_version,
-        platform,
-    ):
+    def _generate_py_library(self, requirement_details, python_version, platform):
         name = _make_environment_specific_alias(
             python_version,
             platform,
@@ -244,12 +233,7 @@ class AliasPackageGenerator(object):
             dep_name = _normalize_distribution_name(dep)
             yield _make_package_label(dep_name)
 
-    def _generate_python_version_alias(
-        self,
-        requirement_name,
-        python_version,
-        platform_subtree,
-    ):
+    def _generate_python_version_alias(self, python_version, platform_subtree):
         alias = SelectAlias(
             _make_python_specific_alias(python_version)
         )
@@ -266,7 +250,7 @@ class AliasPackageGenerator(object):
 
         return alias
 
-    def _generate_repos_file_content(self, requirement_name, python_subtree):
+    def _generate_repos_file_content(self, python_subtree):
         return "\n\n".join(self._generate_repo_variables(python_subtree))
 
     def _generate_repo_variables(self, python_subtree):

@@ -4,9 +4,9 @@ py_library(
     imports = [".."],
     visibility = ["//visibility:public"],
     deps = [
-        "@pip_pip//:lib",
-        "@pip_schematics//:lib",
-        "@pip_setuptools//:lib",
-        "@pip_wheel//:lib",
+        "@pip_rules__pip//:lib",
+        "@pip_rules__schematics//:lib",
+        "@pip_rules__setuptools//:lib",
+        "@pip_rules__wheel//:lib",
     ],
 )

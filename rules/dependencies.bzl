@@ -36,7 +36,7 @@ def pip_rules_dependencies():
 def _remote_wheel(name, url, sha256):
     _ensure_rule_exists(
         remote_wheel,
-        name = "pip_%s" % name,
+        name = "pip_rules__%s" % name,
         url = url,
         sha256 = sha256,
     )

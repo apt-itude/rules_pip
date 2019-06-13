@@ -1,20 +1,6 @@
 load("//:python.bzl", "PYTHON2", "PYTHON3")
 load("//tools/pytest:rules.bzl", "pytest_test")
 
-pytest_test(
-    name = "pyyaml_test_2",
-    src = "pyyaml_test.py",
-    deps = ["@pip2//pyyaml"],
-    python_version = 2,
-)
-
-pytest_test(
-    name = "pyyaml_test_3",
-    src = "pyyaml_test.py",
-    deps = ["@pip3//pyyaml"],
-    python_version = 3,
-)
-
 genrule(
     name = "pyang2_script",
     srcs = ["@pip2//pyang/scripts:pyang"],

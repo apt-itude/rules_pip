@@ -1,5 +1,3 @@
-load("//:python.bzl", "PYTHON2", "PYTHON3")
-
 py_test(
     name = "conditional_dependencies_test_py2",
     srcs = ["conditional_dependencies_test.py"],

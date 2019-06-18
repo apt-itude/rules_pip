@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import sys
+import textwrap
 
 from piprules import lockfile, pipcompat, requirements, resolve
 
@@ -104,7 +105,16 @@ def create_local_wheel_package_build_file(wheel_directory):
     path = os.path.join(wheel_directory, "BUILD")
 
     with open(path, mode="w") as build_file:
-        build_file.write('exports_files(["*"])\n')
+        build_file.write(textwrap.dedent("""
+            package(default_visibility = ["//visibility:public"])
+
+            exports_files(glob(["*.whl"]))
+
+            filegroup(
+                name = "wheels",
+                srcs = glob(["*.whl"]),
+            )
+        """).lstrip())
 
 
 def purge_unused_local_wheels(lock_file, wheel_directory):

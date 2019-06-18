@@ -80,7 +80,7 @@ class ResolverFactory(object):
             finder,
             preparer,
             None,
-            build_options=["--universal"],
+            build_options=[],
             global_options=[],
             no_clean=True,
         )

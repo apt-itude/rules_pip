@@ -113,7 +113,10 @@ def initialize_logging(verbosity):
         1: logging.DEBUG,
     }.get(verbosity, logging.DEBUG)
 
-    logging.basicConfig(level=main_log_level)
+    logging.basicConfig(
+        level=main_log_level,
+        format="%(message)s",
+    )
 
     pip_log_level = {
         0: logging.WARNING,

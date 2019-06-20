@@ -79,6 +79,13 @@ class Source(schematics.models.Model):
     file = schematics.types.StringType(serialize_when_none=False)
     sha256 = schematics.types.StringType(serialize_when_none=False)
 
+    def __eq__(self, other):
+        return (
+            self.url == other.url and
+            self.file == other.file and
+            self.sha256 == other.sha256
+        )
+
 
 class LockFile(schematics.models.Model):
 
@@ -125,16 +132,18 @@ class LockFile(schematics.models.Model):
             resolved_source = resolved_requirement.source
             source_name = resolved_source.get_name()
 
-            # TODO raise error if source exists and is different
             if resolved_source.is_local():
-                self.sources[source_name] = Source(dict(
+                new_source = Source(dict(
                     file=resolved_source.get_file_name(),
                 ))
             else:
-                self.sources[source_name] = Source(dict(
+                new_source = Source(dict(
                     url=resolved_source.url,
                     sha256=resolved_source.sha256,
                 ))
+
+            self._warn_if_source_is_changing(source_name, new_source)
+            self.sources[source_name] = new_source
 
             new_requirements[resolved_requirement.name] = Requirement(dict(
                 version=resolved_requirement.version,
@@ -145,6 +154,15 @@ class LockFile(schematics.models.Model):
 
         self._get_or_create_current_environment().requirements = new_requirements
         self._purge_unused_sources()
+
+    def _warn_if_source_is_changing(self, source_name, new_source):
+        try:
+            existing_source = self.sources[source_name]
+        except KeyError:
+            return
+
+        if new_source != existing_source:
+            LOG.warning("Changing source %s in lock file", source_name)
 
     def _get_or_create_current_environment(self):
         return self.environments.setdefault(

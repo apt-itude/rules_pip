@@ -25,7 +25,6 @@ def main():
 
     lock_file = lockfile.load(lock_file_path or '')
 
-    LOG.info("Collecting requirements")
     requirement_set = requirements.collect_and_condense(
         pip_session,
         lock_file,
@@ -34,7 +33,6 @@ def main():
         packages_to_update=args.packages_to_update,
     )
 
-    LOG.info("Resolving dependencies")
     resolved_requirements = resolve.resolve_requirement_set(
         requirement_set,
         pip_session,

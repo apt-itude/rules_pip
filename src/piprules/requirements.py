@@ -15,6 +15,8 @@ def collect_and_condense(
     update_all=False,
     packages_to_update=None,
 ):
+    LOG.info("Collecting and condensing requirements")
+
     collection = Collection()
 
     if not update_all:

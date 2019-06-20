@@ -11,6 +11,8 @@ LOG = logging.getLogger(__name__)
 
 
 def resolve_requirement_set(requirement_set, pip_session, index_urls, wheel_dir):
+    LOG.info("Resolving dependencies and building wheels")
+
     resolver_factory = ResolverFactory(pip_session, index_urls, wheel_dir)
 
     with resolver_factory.make_resolver() as resolver:

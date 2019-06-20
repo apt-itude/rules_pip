@@ -110,7 +110,8 @@ def parse_args():
 def initialize_logging(verbosity):
     main_log_level = {
         0: logging.INFO,
-        1: logging.DEBUG,
+        1: logging.INFO,
+        2: logging.DEBUG,
     }.get(verbosity, logging.DEBUG)
 
     logging.basicConfig(
@@ -121,7 +122,8 @@ def initialize_logging(verbosity):
     pip_log_level = {
         0: logging.WARNING,
         1: logging.INFO,
-        2: logging.DEBUG,
+        2: logging.INFO,
+        3: logging.DEBUG,
     }.get(verbosity, logging.DEBUG)
 
     pipcompat.LOG.setLevel(pip_log_level)

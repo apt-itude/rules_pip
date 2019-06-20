@@ -35,7 +35,7 @@ class Collection(object):
         self._requirements.append(requirement)
 
     def add_from_lock_file(self, lock_file, packages_to_update=None):
-        LOG.info("Adding requirements from lock file to collection")
+        LOG.debug("Adding requirements from lock file to collection")
 
         if packages_to_update is None:
             packages_to_update = []
@@ -67,7 +67,7 @@ class Collection(object):
                 self.add(requirement)
 
     def add_from_requirements_file(self, path, pip_session):
-        LOG.info("Adding requirements from file %s to collection", path)
+        LOG.debug("Adding requirements from file %s to collection", path)
 
         for requirement in pipcompat.parse_requirements(path, session=pip_session):
             LOG.debug("Adding direct requirement %s", requirement)
@@ -75,7 +75,7 @@ class Collection(object):
             self.add(requirement)
 
     def condense(self):
-        LOG.info("Condensing requirement collection into a set")
+        LOG.debug("Condensing requirement collection into a set")
 
         condensed_set = pipcompat.RequirementSet()
 

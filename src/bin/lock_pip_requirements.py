@@ -25,6 +25,7 @@ def main():
 
     lock_file = lockfile.load(lock_file_path or '')
 
+    LOG.info("Collecting requirements")
     requirement_set = requirements.collect_and_condense(
         pip_session,
         lock_file,
@@ -33,6 +34,7 @@ def main():
         packages_to_update=args.packages_to_update,
     )
 
+    LOG.info("Resolving dependencies")
     resolved_requirements = resolve.resolve_requirement_set(
         requirement_set,
         pip_session,
@@ -136,6 +138,8 @@ def get_workspace_directory():
 
 
 def create_local_wheel_package_build_file(wheel_directory):
+    LOG.info("Creating local wheel package in %s", wheel_directory)
+
     path = os.path.join(wheel_directory, "BUILD")
 
     with open(path, mode="w") as build_file:

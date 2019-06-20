@@ -12,8 +12,8 @@ LOG = logging.getLogger()
 
 def main():
     args = parse_args()
-    logging.basicConfig(level=logging.DEBUG)
-    pipcompat.LOG.setLevel(logging.INFO)
+
+    initialize_logging(args.verbosity)
 
     workspace_directory = get_workspace_directory()
     lock_file_path = os.path.join(workspace_directory, args.lock_file_path)
@@ -94,11 +94,34 @@ def parse_args():
         required=True,
     )
     parser.add_argument(
+        "-v", "--verbose",
+        action="count",
+        default=0,
+        dest="verbosity",
+        help="increase output verbosity"
+    )
+    parser.add_argument(
         "requirements_files",
         nargs="*",
     )
     return parser.parse_args()
 
+
+def initialize_logging(verbosity):
+    main_log_level = {
+        0: logging.INFO,
+        1: logging.DEBUG,
+    }.get(verbosity, logging.DEBUG)
+
+    logging.basicConfig(level=main_log_level)
+
+    pip_log_level = {
+        0: logging.WARNING,
+        1: logging.INFO,
+        2: logging.DEBUG,
+    }.get(verbosity, logging.DEBUG)
+
+    pipcompat.LOG.setLevel(pip_log_level)
 
 def get_workspace_directory():
     try:

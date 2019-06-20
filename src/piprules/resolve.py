@@ -10,6 +10,11 @@ from piprules import pipcompat, urlcompat, util
 LOG = logging.getLogger(__name__)
 
 
+class Error(Exception):
+
+    """Base exception for the resolve module"""
+
+
 def resolve_requirement_set(requirement_set, pip_session, index_urls, wheel_dir):
     LOG.info("Resolving dependencies and building wheels")
 
@@ -148,8 +153,7 @@ class Resolver(object):
             session=self._session,
         )
         if build_failures:
-            # TODO raise better error
-            raise RuntimeError('Failed to build one or more wheels')
+            raise WheelBuildError(build_failures)
 
     def _create_resolved_requirement(self, requirement):
         LOG.debug("Creating resolved requirement for %s", requirement.name)
@@ -210,6 +214,15 @@ class Resolver(object):
         return util.compute_file_hash(temp_wheel_path)
 
 
+class WheelBuildError(Error):
+
+    """Failed to build one or more wheels"""
+
+    def __init__(self, failures):
+        super(WheelBuildError, self).__init__(self.__doc__)
+        self.failures = failures
+
+
 def _find_wheel(directory, name):
     canon_name = pipcompat.canonicalize_name(name)
     for filename in os.listdir(directory):
@@ -222,8 +235,19 @@ def _find_wheel(directory, name):
             if pipcompat.canonicalize_name(wheel.name) == canon_name:
                 return path
 
-    # TODO raise better error
-    raise RuntimeError('Could not find wheel matching name "{}"'.format(name))
+    raise WheelFindError(name)
+
+
+class WheelFindError(Error):
+
+    """Failed to find a wheel file"""
+
+    def __init__(self, name):
+        super(WheelFindError, self).__init__()
+        self.name = name
+
+    def __str__(self):
+        return 'Could not find wheel matching name "{}"'.format(self.name)
 
 
 def _copy_file_if_missing(source_path, directory):

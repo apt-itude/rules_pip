@@ -42,11 +42,17 @@ def main():
 
     lock_file.update_requirements_for_current_environment(resolved_requirements)
 
-    # TODO raise error if wheel dir changes?
-    lock_file.local_wheels_package = "@{workspace}//{package}".format(
+    new_local_wheels_package = "@{workspace}//{package}".format(
         workspace=args.workspace_name,
         package=args.wheel_dir,
     )
+    if new_local_wheels_package != lock_file.local_wheels_package:
+        LOG.warning(
+            "Local wheels package is changing from '%s' to '%s'",
+            lock_file.local_wheels_package,
+            new_local_wheels_package,
+        )
+        lock_file.local_wheels_package = new_local_wheels_package
 
     if os.path.isdir(wheel_directory):
         create_local_wheel_package_build_file(wheel_directory)

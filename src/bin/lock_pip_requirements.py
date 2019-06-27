@@ -18,6 +18,7 @@ def main():
     workspace_directory = get_workspace_directory()
     lock_file_path = os.path.join(workspace_directory, args.lock_file_path)
     wheel_directory = os.path.join(workspace_directory, args.wheel_dir)
+    index_urls = args.index_urls or ["https://pypi.org/simple"]
 
     LOG.info("Locking pip requirements for Python %s", sys.version_info.major)
 
@@ -36,7 +37,7 @@ def main():
     resolved_requirements = resolve.resolve_requirement_set(
         requirement_set,
         pip_session,
-        [args.index_url],
+        index_urls,
         wheel_directory,
     )
 
@@ -87,7 +88,8 @@ def parse_args():
     )
     parser.add_argument(
         "-i", "--index-url",
-        default="https://pypi.org/simple",
+        action="append",
+        dest="index_urls",
     )
     parser.add_argument(
         "-w", "--wheel-dir",

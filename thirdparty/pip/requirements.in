@@ -4,3 +4,4 @@ pyang
 pytest
 pytest-mock
 pyyaml
+tensorflow ; python_version > "3.0"

@@ -92,3 +92,12 @@ py_test(
     python_version = "PY3",
     tags = ["new"],
 )
+
+py_test(
+    name = "tensorflow_test",
+    srcs = ["tensorflow_test.py"],
+    deps = [
+        "@pip//tensorflow"
+    ],
+    python_version = "PY3"
+)

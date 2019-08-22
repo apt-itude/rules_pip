@@ -3,7 +3,7 @@ import argparse
 import glob
 import os
 import textwrap
-
+import shutil
 
 _WHEEL_BUILD_FILE_CONTENT = textwrap.dedent("""
     py_library(
@@ -53,8 +53,28 @@ class WheelRepositoryGenerator(object):
         self._create_base_package_build_file()
 
         for data_directory in self._find_data_directories():
+            self._handle_purelib_and_platlib(data_directory)
             DataPackageGenerator(self.repository_directory, data_directory).generate()
 
+    def _handle_purelib_and_platlib(self, data_directory):
+        full_path = os.path.join(self.repository_directory, data_directory)
+
+        try:
+            data_contents = os.listdir(full_path)
+        except:
+            data_contents = []
+        
+        if 'purelib' in full_path or 'platlib' in full_path:
+            source = full_path
+        else:
+            source = None
+        
+        if source:
+            for f in os.listdir(full_path):
+                if 'BUILD' in str(f):
+                    continue
+                shutil.move(os.path.join(source, f), self.repository_directory)
+    
     def _create_base_package_build_file(self):
         with open(self.base_package_build_file_path, mode="w") as build_file:
             build_file.write(_WHEEL_BUILD_FILE_CONTENT)

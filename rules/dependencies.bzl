@@ -68,7 +68,7 @@ def pip_rules_dependencies():
         git_repository,
         name = "subpar",
         remote = "https://github.com/google/subpar",
-        tag = "1.3.0",
+        tag = "2.0.0",
     )
 
 def _remote_wheel(name, url, sha256):

@@ -69,7 +69,7 @@ class _PyDistPackageGenerator(object):
             )
         """).lstrip().format(
             name=self.library_name,
-            deps=_create_string_list(dep.label for dep in self.library_dependencies),
+            deps=_create_string_list(sorted(dep.label for dep in self.library_dependencies)),
         )
 
         with open(self.base_package_build_file_path, mode="w") as build_file:

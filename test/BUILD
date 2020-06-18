@@ -56,6 +56,14 @@ pytest_test(
     python_version = 3,
 )
 
+pytest_test(
+    name = "namespace_pkgs_test",
+    src = "namespace_pkgs_test.py",
+    deps = ["@pip3//azure_mgmt_compute", "@pip3//azure_mgmt_resource"],
+    python_version = 3,
+)
+
+
 genrule(
     name = "pyang2_script",
     srcs = ["@pip2//pyang/scripts:pyang"],

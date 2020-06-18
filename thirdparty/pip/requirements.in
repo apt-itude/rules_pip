@@ -1,3 +1,5 @@
+azure-mgmt-resource
+azure-mgmt-compute
 isort
 pathlib2 ; python_version < "3.0"
 pyang

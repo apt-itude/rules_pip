@@ -6,7 +6,7 @@ import pkg_resources
 from pip._internal import main as pip_main
 from wheel import wheelfile
 
-from piprules import util
+from piprules import namespace_pkgs, util
 
 
 class Error(Exception):
@@ -17,11 +17,8 @@ class Error(Exception):
 def download(dest_directory, requirements_file_path, *extra_args):
     with _add_pip_import_paths_to_pythonpath():
         pip_main(
-            args=[
-                "wheel",
-                "-w", dest_directory,
-                "-r", requirements_file_path,
-            ] + list(extra_args)
+            args=["wheel", "-w", dest_directory, "-r", requirements_file_path]
+            + list(extra_args)
         )
 
 
@@ -48,7 +45,7 @@ def unpack(wheel_path, dest_directory):
         library_name = util.normalize_distribution_name(distribution_name)
         package_directory = os.path.join(dest_directory, library_name)
         wheel_file.extractall(package_directory)
-
+        namespace_pkgs.setup_namespace_pkg_compatibility(package_directory)
     try:
         return next(pkg_resources.find_distributions(package_directory))
     except StopIteration:

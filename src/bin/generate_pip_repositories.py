@@ -179,16 +179,16 @@ class AliasPackageGenerator(object):
         write_file(repos_file_path, repos_file_content)
 
     def _generate_build_file_content(self, build_rules):
-        return textwrap.dedent("""
-            package(default_visibility = ["//visibility:public"])
-
-            {rules}
-        """).strip().format(
-            rules="\n".join(build_rules),
-        )
+        return textwrap.dedent("\n".join(build_rules))
 
     def _generate_rules_for_requirement(self, requirement_name, python_subtree):
         top_alias = SelectAlias(requirement_name)
+
+        # We want to make the top alias "visible" only if the package is specified
+        # in the requirements.txt file (i.e. has `is_direct=True` field in the lock
+        # file). Since there's an `is_direct` key for each python_version/platform,
+        # we're going to set the visibility  to public if any of those is True.
+        visibility = "//:__subpackages__"
 
         for python_version, platform_subtree in python_subtree.items():
             for platform, requirement_details in platform_subtree.items():
@@ -197,6 +197,8 @@ class AliasPackageGenerator(object):
                     python_version,
                     platform,
                 )
+                if requirement_details["is_direct"]:
+                    visibility = "//visibility:public"
 
             version_alias = self._generate_python_version_alias(
                 python_version,
@@ -208,6 +210,7 @@ class AliasPackageGenerator(object):
             python_version_label = _make_python_version_label(python_version)
             top_alias.actual[python_version_label] = version_alias.name
 
+        top_alias.visibility = visibility
         yield str(top_alias)
 
     def _generate_py_library(self, requirement_details, python_version, platform):
@@ -331,16 +334,19 @@ class SelectAlias(object):
     def __init__(self, name):
         self.name = name
         self.actual = {}
+        self.visibility = "//visibility:private"
 
     def __str__(self):
         return textwrap.dedent("""
             alias(
                 name = "{name}",
                 actual = select({actual}),
+                visibility = ["{visibility}"],
             )
         """).strip().format(
             name=self.name,
             actual=self.actual,
+            visibility=self.visibility,
         )
 
 

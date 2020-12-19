@@ -59,6 +59,32 @@ py_test(
     tags = ["new"],
 )
 
+py_test(
+    name = "visibility_test",
+    srcs = ["visibility_test.py"],
+    data = [
+        ":visibility_test_pytest_six",
+        ":visibility_test_lib_six",
+    ],
+)
+
+genquery(
+    name = "visibility_test_pytest_six",
+    expression = "visible('@pip//pytest', '@pip//six')",
+    scope = ["@pip//pytest"],
+)
+
+py_library(
+    name = "visibility_test_library",
+    deps = ["@pip//pytest"],
+)
+
+genquery(
+    name = "visibility_test_lib_six",
+    expression = "visible('//test:visibility_test_library', '@pip//six')",
+    scope = [":visibility_test_library"],
+)
+
 genrule(
     name = "pyang-main",
     srcs = [pyang_repo + "//scripts:pyang"],

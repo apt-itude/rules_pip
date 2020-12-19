@@ -44,7 +44,7 @@
         },
         "lxml": {
           "dependencies": [],
-          "is_direct": false,
+          "is_direct": true,
           "source": "lxml_4_3_3_cp27_cp27m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
           "version": "4.3.3"
         },
@@ -176,7 +176,7 @@
         },
         "lxml": {
           "dependencies": [],
-          "is_direct": false,
+          "is_direct": true,
           "source": "lxml_4_3_3_cp36_cp36m_macosx_10_6_intel_macosx_10_9_intel_macosx_10_9_x86_64_macosx_10_10_intel_macosx_10_10_x86_64",
           "version": "4.3.3"
         },
@@ -300,7 +300,7 @@
         },
         "lxml": {
           "dependencies": [],
-          "is_direct": false,
+          "is_direct": true,
           "source": "lxml_4_3_3_cp27_cp27mu_manylinux1_x86_64",
           "version": "4.3.3"
         },
@@ -432,7 +432,7 @@
         },
         "lxml": {
           "dependencies": [],
-          "is_direct": false,
+          "is_direct": true,
           "source": "lxml_4_3_3_cp36_cp36m_manylinux1_x86_64",
           "version": "4.3.3"
         },

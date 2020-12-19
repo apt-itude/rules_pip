@@ -28,6 +28,10 @@ class Requirement(schematics.models.Model):
         schematics.types.StringType,
         default=[],
     )
+    extras = _SortedListType(
+        schematics.types.StringType,
+        default=[],
+    )
 
 
 class Environment(schematics.models.Model):
@@ -150,6 +154,7 @@ class LockFile(schematics.models.Model):
                 is_direct=resolved_requirement.is_direct,
                 source=source_name,
                 dependencies=resolved_requirement.dependencies,
+                extras=resolved_requirement.extras,
             ))
 
         self._get_or_create_current_environment().requirements = new_requirements

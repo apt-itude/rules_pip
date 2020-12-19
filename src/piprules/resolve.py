@@ -163,7 +163,7 @@ class Resolver(object):
 
         dependencies = [
             pipcompat.canonicalize_name(dep.name)
-            for dep in dist.requires()
+            for dep in dist.requires(requirement.extras)
         ]
         version = dist.version
 
@@ -187,6 +187,7 @@ class Resolver(object):
             source,
             is_direct=requirement.is_direct,
             dependencies=dependencies,
+            extras=requirement.extras,
         )
 
     def _set_link_to_local_wheel(self, requirement):
@@ -266,12 +267,13 @@ def _copy_file_if_missing(source_path, directory):
 
 class ResolvedRequirement(object):
 
-    def __init__(self, name, version, source, is_direct=False, dependencies=None):
+    def __init__(self, name, version, source, is_direct=False, dependencies=None, extras=None):
         self.name = name
         self.version = version
         self.source = source
         self.is_direct = is_direct
         self.dependencies = dependencies or []
+        self.extras = extras or []
 
 
 class ResolvedRequirementSource(object):

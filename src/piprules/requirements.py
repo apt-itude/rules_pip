@@ -62,6 +62,7 @@ class Collection(object):
             else:
                 requirement = _create_locked_requirement(
                     name,
+                    details.extras,
                     details.version,
                     details.is_direct,
                 )
@@ -111,7 +112,9 @@ class Collection(object):
         return util.full_groupby(self._requirements, key=_get_key)
 
 
-def _create_locked_requirement(name, version, is_direct):
+def _create_locked_requirement(name, extras, version, is_direct):
+    if extras:
+        name = "{}[{}]".format(name, ",".join(sorted(extras)))
     constraint = "{}=={}".format(name, version)
     requirement = pipcompat.create_requirement_from_string(
         constraint,
